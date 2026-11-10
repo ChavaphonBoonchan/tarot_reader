@@ -15,7 +15,31 @@ Agent skill สำหรับ Claude (Claude Code และ agent ที่ร�
 
 ## ติดตั้ง
 
-ติดตั้งสำหรับผู้ใช้ทุกโปรเจกต์ (Claude Code):
+### ด้วย npx (แนะนำ)
+
+ใช้ [Skills CLI](https://skills.sh/) ติดตั้งจาก GitHub ได้เลย รองรับ Claude Code, Codex, Cursor, GitHub Copilot และ agent อื่นอีกหลายตัว
+
+ติดตั้งให้ใช้ได้ทุกโปรเจกต์:
+
+```bash
+npx skills add ChavaphonBoonchan/tarot_reader -g
+```
+
+หรือเฉพาะโปรเจกต์ปัจจุบัน:
+
+```bash
+npx skills add ChavaphonBoonchan/tarot_reader
+```
+
+อัปเดตเป็นเวอร์ชันล่าสุด:
+
+```bash
+npx skills update
+```
+
+### ด้วย git clone
+
+ติดตั้งสำหรับทุกโปรเจกต์ (Claude Code):
 
 ```bash
 git clone https://github.com/ChavaphonBoonchan/tarot_reader.git ~/.claude/skills/tarot-reading
@@ -27,7 +51,7 @@ git clone https://github.com/ChavaphonBoonchan/tarot_reader.git ~/.claude/skills
 git clone https://github.com/ChavaphonBoonchan/tarot_reader.git .claude/skills/tarot-reading
 ```
 
-แล้วเริ่ม session ใหม่ ต้องมี `python3` (ใช้แค่ library มาตรฐาน)
+ติดตั้งแล้วเริ่ม session ใหม่ ต้องมี `python3` (ใช้แค่ library มาตรฐาน)
 
 ## วิธีใช้
 
