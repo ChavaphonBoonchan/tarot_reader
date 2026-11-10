@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>โต๊ะไพ่ทาโรต์</title>
+<meta name="description" content="โต๊ะไพ่ทาโรต์ที่คุณสับ ตัด จั่ว และเปิดไพ่เองทุกขั้น แล้วส่งผลกลับไปให้อ่านในแชท">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='2' width='20' height='28' rx='3' fill='%236b4fbb' stroke='%231c1a17' stroke-width='2.5'/%3E%3Cpath d='M16 8l2 6 6 2-6 2-2 6-2-6-6-2 6-2z' fill='%23ffd23f' stroke='%231c1a17' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== tokens ===== */
+:root{
+  --paper:#f5edda; --paper-2:#ebdfc4; --panel:#fffaf0; --ink:#1c1a17; --muted:#5e5648;
+  --line:#1c1a17; --sh:#1c1a17;
+  --yellow:#ffd23f; --red:#e4572e; --blue:#3a7bd5; --violet:#6b4fbb; --violet-2:#4b3590;
+  --card-face:#fffaf0; --card-ink:#1c1a17;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .15 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --dots:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Ccircle cx='2' cy='2' r='1.3' fill='%231c1a17' fill-opacity='.16'/%3E%3C/svg%3E");
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#131209; --paper-2:#272727; --panel:#1F1F1F; --ink:#f3e9d2; --muted:#b9ad95;
+  --line:#e9dcc0; --sh:#000000; color-scheme:dark;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --dots:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Ccircle cx='2' cy='2' r='1.3' fill='%23f3e9d2' fill-opacity='.1'/%3E%3C/svg%3E");
+}}
+:root[data-theme="dark"]{
+  --paper:#131209; --paper-2:#272727; --panel:#1F1F1F; --ink:#f3e9d2; --muted:#b9ad95;
+  --line:#e9dcc0; --sh:#000000; color-scheme:dark;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --dots:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Ccircle cx='2' cy='2' r='1.3' fill='%23f3e9d2' fill-opacity='.1'/%3E%3C/svg%3E");
+}
+
+/* ===== text styles (Tailwind scale) ===== */
+.heading-3{font-size:36px;line-height:40px;font-weight:700}
+.heading-4{font-size:30px;line-height:36px;font-weight:700}
+.heading-5{font-size:24px;line-height:32px;font-weight:600}
+.heading-6{font-size:20px;line-height:28px;font-weight:600}
+.title-2{font-size:18px;line-height:28px;font-weight:500}
+.title-3{font-size:16px;line-height:24px;font-weight:600}
+.title-4{font-size:14px;line-height:20px;font-weight:500}
+.body-3{font-size:16px;line-height:24px;font-weight:400}
+.body-5{font-size:14px;line-height:20px;font-weight:500}
+.body-6{font-size:14px;line-height:20px;font-weight:400}
+.button-md{font-size:16px;line-height:24px;font-weight:600}
+.button-sm{font-size:14px;line-height:20px;font-weight:600}
+.caption-3{font-size:12px;line-height:16px;font-weight:600}
+.caption-5{font-size:12px;line-height:16px;font-weight:400}
+h1,h2,p{margin:0;text-wrap:balance}
+p{text-wrap:pretty}
+
+/* ===== base ===== */
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background-color:var(--paper);background-image:var(--grain);color:var(--ink);font-family:"Mali",system-ui,sans-serif;font-size:16px;line-height:24px;min-height:100vh}
+.skip{position:absolute;left:16px;top:-64px;background:var(--yellow);color:#1c1a17;border:3px solid #1c1a17;border-radius:8px;padding:8px 12px;z-index:9;transition:transform .3s var(--ease)}
+.skip:focus{transform:translateY(80px)}
+.wrap{max-width:960px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+i[data-ic]{display:inline-flex;width:1em;height:1em;line-height:1;flex:none}
+i[data-ic] svg{width:100%;height:100%;fill:currentColor;display:block}
+
+/* header */
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:56px;height:56px;flex:none;display:grid;place-items:center;background:var(--violet);color:var(--yellow);border:3px solid var(--line);border-radius:12px;box-shadow:4px 4px 0 var(--sh);transform:rotate(-4deg);font-size:32px}
+.brand h1{max-width:680px}
+.brand p{color:var(--muted);max-width:680px}
+.sticker{flex:none;background:var(--red);color:#fffaf0;border:3px solid var(--line);border-radius:9999px;padding:4px 12px;transform:rotate(3deg);box-shadow:3px 3px 0 var(--sh);white-space:nowrap}
+
+/* strip (stepper) */
+.strip{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:0 0 24px;padding:0;list-style:none}
+.strip li{border:3px solid var(--line);border-radius:8px;background:var(--panel);padding:8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.strip li .n{color:var(--muted)}
+.strip li .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip li.on{background:var(--yellow);color:#1c1a17;box-shadow:4px 4px 0 var(--sh);transform:translate(-2px,-2px)}
+.strip li.on .n{color:#1c1a17}
+.strip li.done{background:var(--paper-2)}
+.strip li.done .n::after{content:" ✓"}
+
+/* panel */
+.panel{position:relative;background:var(--panel);border:3px solid var(--line);border-radius:12px;box-shadow:8px 8px 0 var(--sh);padding:40px 24px 24px;overflow:visible}
+.panel::before{content:"";position:absolute;right:0;top:0;width:160px;height:160px;background-image:var(--dots);border-radius:0 9px 0 0;-webkit-mask-image:linear-gradient(225deg,#000 0,transparent 70%);mask-image:linear-gradient(225deg,#000 0,transparent 70%);pointer-events:none}
+.caption-box{position:absolute;top:-16px;left:16px;background:var(--yellow);color:#1c1a17;border:3px solid var(--line);border-radius:4px;padding:4px 12px;transform:rotate(-2deg);box-shadow:3px 3px 0 var(--sh)}
+.panel h2{margin-bottom:12px}
+.enter{animation:rise .6s var(--ease) both}
+@keyframes rise{from{opacity:.6;transform:translateY(32px)}to{opacity:1;transform:none}}
+
+/* speech bubble */
+.bubble{position:relative;display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:3px solid var(--line);border-radius:16px;padding:12px 16px;margin:0 0 24px 0;max-width:680px}
+.bubble i{font-size:24px;color:var(--violet);flex:none}
+:root[data-theme="dark"] .bubble i{color:var(--yellow)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bubble i{color:var(--yellow)}}
+
+/* forms */
+label.f{display:block;margin:16px 0 8px}
+textarea,select,input[type=number]{width:100%;font:inherit;font-size:16px;line-height:24px;color:var(--ink);background:var(--paper);border:3px solid var(--line);border-radius:8px;padding:8px 12px}
+textarea{min-height:96px;resize:vertical}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M3 6l5 5 5-5' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:40px}
+.toggle{display:flex;gap:12px;align-items:center;margin-top:16px;cursor:pointer;width:fit-content}
+.toggle input{width:24px;height:24px;accent-color:var(--violet);margin:0}
+input[type=range]{width:100%;accent-color:var(--violet);height:24px}
+
+/* buttons */
+.btn{text-wrap:balance;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;cursor:pointer;color:var(--ink);background:var(--panel);border:3px solid var(--line);border-radius:8px;padding:8px 12px;box-shadow:4px 4px 0 var(--sh);transition:transform .3s var(--ease)}
+.btn i{font-size:20px}
+.btn:hover{transform:translate(-2px,-2px)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--sh)}
+.btn.primary{background:var(--yellow);color:#1c1a17}
+.btn.blue{background:var(--blue);color:#fffaf0}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:2px 2px 0 var(--sh)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:32px;padding-top:24px;border-top:3px dashed var(--line)}
+.actions .spacer{flex:1}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* category + type + question pages */
+.cnt{flex:none;border:2px solid currentColor;border-radius:9999px;padding:0 8px}
+.muted{color:var(--muted)}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cat{flex-direction:column;align-items:flex-start;text-align:left;gap:12px;padding:16px;min-height:208px}
+.cat-ic{flex:none;width:48px;height:48px;display:grid;place-items:center;border:3px solid var(--card-ink);border-radius:9999px;font-size:24px;color:#1c1a17;transition:transform .3s var(--ease)}
+.cat:hover .cat-ic{transform:rotate(-10deg) scale(1.08)}
+.tone-yellow{background:var(--yellow)} .tone-red{background:var(--red);color:#fffaf0} .tone-blue{background:var(--blue);color:#fffaf0} .tone-violet{background:var(--violet);color:#fffaf0} .tone-gold{background:#e9b949}
+.cat-body{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.cat-desc{color:var(--muted)}
+.cat-foot{display:flex;justify-content:space-between;align-items:center;width:100%;color:var(--muted)}
+.cat-foot i{font-size:20px;color:var(--ink);transition:transform .3s var(--ease)}
+.cat:hover .cat-foot i,.type:hover .go-ic{transform:translateX(4px)}
+.back-link{margin-bottom:24px}
+.type-head{display:flex;gap:16px;align-items:center;margin-bottom:24px}
+.type-head h2{margin:0}
+.types{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.type{flex-direction:row;align-items:center;gap:16px;padding:16px;text-align:left}
+.type-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.type-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.type .hint,.type .pos{color:var(--muted)}
+.type.cur{outline:3px solid var(--violet);outline-offset:3px}
+.go-ic{flex:none;font-size:20px;transition:transform .3s var(--ease)}
+.mini{position:relative;display:inline-flex;flex:none;width:64px;height:56px}
+.mini span{position:absolute;left:22px;top:10px;width:20px;height:30px;border:2px solid var(--card-ink);border-radius:4px;background:var(--violet);box-shadow:inset 0 0 0 2px var(--yellow);transform-origin:50% 130%;transform:rotate(calc((var(--i) - (var(--k) - 1) / 2) * 9deg))}
+.mini b{position:absolute;right:-4px;bottom:0;background:var(--yellow);color:#1c1a17;border:2px solid var(--card-ink);border-radius:9999px;padding:0 4px}
+.chosen{background:var(--violet);color:#fffaf0;border:3px solid var(--line);border-radius:12px;padding:16px;margin-bottom:24px;box-shadow:4px 4px 0 var(--sh)}
+.chosen .btn{color:var(--ink)}
+.chosen .mini span{background:var(--violet-2)}
+.chosen-top{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.chosen-name{flex:1;min-width:160px;display:flex;flex-direction:column}
+.chosen-name .caption-3{opacity:.85}
+.pos-list{list-style:none;margin:16px 0 0;padding:16px 0 0;border-top:2px dashed #fffaf0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 16px}
+.pos-list li{display:flex;gap:8px;align-items:flex-start;min-width:0}
+.pn{flex:none;width:24px;height:24px;display:grid;place-items:center;border-radius:9999px;background:var(--yellow);color:#1c1a17;border:2px solid var(--card-ink)}
+.custom-box{display:flex;flex-direction:column;gap:12px;max-width:360px}
+.stepper{display:flex;gap:12px;align-items:center}
+.stepper input{width:96px;text-align:center}
+
+/* context chips, reading, agent send */
+textarea.short{min-height:72px}
+.ctx-chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;cursor:pointer;color:var(--ink);background:var(--panel);border:2px solid var(--line);border-radius:9999px;padding:4px 12px;box-shadow:2px 2px 0 var(--sh);transition:transform .3s var(--ease)}
+.chip:hover{transform:translate(-1px,-1px)}
+.chip:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--sh)}
+.chip.on{background:var(--violet);color:#fffaf0}
+.card-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.card-chip{display:inline-flex;gap:4px;align-items:center;border:2px solid var(--line);border-radius:9999px;padding:2px 12px 2px 4px;background:var(--paper)}
+.card-chip b{display:grid;place-items:center;width:20px;height:20px;border-radius:9999px;background:var(--yellow);color:#1c1a17;border:2px solid var(--card-ink)}
+.reading{background:var(--paper);border:3px solid var(--line);border-radius:12px;padding:24px;max-width:760px;min-height:120px}
+.reading h3{margin:24px 0 8px;display:inline-block;background:var(--yellow);color:#1c1a17;border:2px solid var(--card-ink);border-radius:4px;padding:0 8px;transform:rotate(-1deg)}
+.reading h3:first-child{margin-top:0}
+.reading p{margin:0 0 12px;max-width:68ch}
+.reading ul{margin:0 0 12px;padding-left:24px;display:grid;gap:4px}
+.thinking{display:flex;gap:16px;align-items:center;color:var(--muted)}
+.flip{width:32px;height:48px;perspective:200px;flex:none}
+.flip .cb{display:block;width:100%;height:100%;border-width:2px;background-size:60%,6px 6px;animation:flip 1.4s var(--ease) infinite}
+@keyframes flip{0%{transform:rotateY(0)}50%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+details.raw{margin-top:24px;border:3px dashed var(--line);border-radius:12px;padding:12px 16px}
+details.raw summary{cursor:pointer}
+.send-box{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border:3px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:24px;background:var(--paper)}
+.send-box i{font-size:24px}
+.send-box span{flex:1;min-width:0}
+.send-box.sent{background:var(--yellow);color:#1c1a17}
+.send-box.error{border-color:var(--red)}
+
+/* shuffle */
+.stage{position:relative;display:flex;justify-content:center;padding:32px 0 16px;overflow-x:clip}
+.mat{position:relative;width:100%;max-width:560px;height:240px;border:3px dashed var(--line);border-radius:16px;background-image:var(--dots)}
+.sc{position:absolute;left:50%;top:50%;width:72px;height:112px;margin:-56px 0 0 -36px;border-width:2px;background-size:56%,8px 8px;box-shadow:inset 0 0 0 3px var(--violet),inset 0 0 0 5px var(--yellow),2px 2px 0 var(--sh);will-change:transform}
+.sc.fly{z-index:5}
+.count{position:absolute;right:12px;bottom:12px;background:var(--panel);border:3px solid var(--line);border-radius:9999px;padding:2px 8px;z-index:2}
+.sfx{position:absolute;left:50%;top:8px;pointer-events:none;opacity:0;z-index:3}
+.sfx .b1,.sfx .b2{position:absolute;inset:0;clip-path:polygon(50% 0,61% 28%,92% 12%,76% 42%,100% 55%,70% 64%,82% 96%,52% 76%,26% 100%,30% 68%,0 62%,24% 44%,6% 14%,38% 28%)}
+.sfx .b1{background:#1c1a17}
+.sfx .b2{background:var(--yellow);inset:5px}
+.sfx{width:120px;height:96px;margin-left:24px;top:-4px}
+.sfx span{position:absolute;inset:0;display:grid;place-items:center;color:#1c1a17;font-weight:700;font-size:20px;line-height:28px;transform:rotate(-8deg)}
+.sfx.pop{animation:pop .7s var(--ease)}
+@keyframes pop{0%{opacity:0;transform:scale(.4) rotate(-12deg)}25%{opacity:1;transform:scale(1.08) rotate(4deg)}70%{opacity:1;transform:scale(1) rotate(0)}100%{opacity:0;transform:scale(.9)}}
+.methods{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px}
+.method{flex-direction:column;align-items:flex-start;text-align:left;gap:4px;padding:12px}
+.method i{font-size:32px;color:var(--violet);margin-bottom:4px}
+:root[data-theme="dark"] .method i{color:var(--yellow)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .method i{color:var(--yellow)}}
+.method small{color:var(--muted)}
+.hold-row{display:grid;grid-template-columns:1fr auto;gap:16px;margin-top:16px;align-items:center}
+.hold{touch-action:none;user-select:none;-webkit-user-select:none;width:100%}
+.hold.active{transform:translate(4px,4px);box-shadow:0 0 0 var(--sh)}
+.pk{display:flex;gap:8px;align-items:center;white-space:nowrap}
+.pk select{width:auto}
+.log{display:flex;gap:8px;align-items:center;margin-top:16px;color:var(--muted)}
+
+/* jumper */
+.alert{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:24px;padding:16px;border:3px solid var(--line);border-radius:12px;background:var(--paper);background-image:var(--dots)}
+.alert .txt{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px}
+
+/* cut */
+.points{display:grid;gap:8px}
+.slider-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.piles{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin:32px 0 8px}
+.pile-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.pile{position:relative;flex-direction:column;gap:8px;padding:12px;background:var(--paper);box-shadow:4px 4px 0 var(--sh)}
+.pile .cb{width:64px;transition:transform .5s var(--ease)}
+.pile .cb.turned{transform:rotate(180deg)}
+.pile .ord{position:absolute;top:-16px;right:-16px;width:32px;height:32px;display:grid;place-items:center;border-radius:9999px;background:var(--yellow);color:#1c1a17;border:3px solid var(--line);opacity:0;transform:scale(.5);transition:transform .3s var(--ease),opacity .3s var(--ease)}
+.pile.ordered .ord{opacity:1;transform:none}
+.mini-toggle{display:flex;gap:8px;align-items:center;cursor:pointer}
+.mini-toggle input{width:20px;height:20px;accent-color:var(--violet);margin:0}
+.warn{color:var(--red);margin-top:8px}
+
+/* card back */
+.cb{border:3px solid var(--card-ink);border-radius:8px;background-color:var(--violet);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3 24 16 37 20 24 24 20 37 16 24 3 20 16 16Z' fill='%23ffd23f' stroke='%231c1a17' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Ccircle cx='2' cy='2' r='1.4' fill='%234b3590'/%3E%3C/svg%3E");
+  background-repeat:no-repeat,repeat;background-position:center,0 0;background-size:44%,8px 8px;
+  box-shadow:inset 0 0 0 4px var(--violet),inset 0 0 0 6px var(--yellow)}
+
+/* slots + fan */
+.spread-name{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.tag{display:inline-flex;align-items:center;gap:4px;border:3px solid var(--line);border-radius:9999px;padding:2px 12px;background:var(--paper)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:24px 16px;margin:8px 0}
+.slot{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.slot .pos{display:flex;gap:4px;align-items:flex-start;justify-content:center;min-height:40px;color:var(--muted)}
+.slot .pos b{color:var(--ink)}
+.ph-slot{width:104px;height:168px;border:3px dashed var(--line);border-radius:8px;opacity:.5}
+.slot .cb.fill{width:104px;height:168px}
+.slot .cb.fill.new{animation:drop .5s var(--ease)}
+@keyframes drop{from{opacity:0;transform:translateY(-24px) rotate(-6deg)}to{opacity:1;transform:none}}
+.fan{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:8px;margin-top:24px;padding:16px;border:3px solid var(--line);border-radius:12px;background:var(--paper);background-image:var(--dots)}
+.fan button{position:relative;height:64px;padding:0;border:none;background:none;cursor:pointer}
+.fan button .cb{position:absolute;inset:0;border-width:2px;box-shadow:inset 0 0 0 2px var(--violet),inset 0 0 0 4px var(--yellow);background-size:60%,8px 8px;transition:transform .3s var(--ease)}
+.fan button:hover .cb{transform:translateY(-4px) rotate(-3deg)}
+.fan button.sel .cb{transform:translateY(-8px);outline:3px solid var(--red);outline-offset:2px}
+.fan button span{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);background:var(--panel);color:var(--ink);border:2px solid var(--line);border-radius:9999px;padding:0 4px;min-width:24px}
+.fan button.sel span{background:var(--red);color:#fffaf0}
+
+/* card flip */
+.c3d{width:104px;height:168px;perspective:900px;background:none;border:none;padding:0;cursor:pointer}
+.c3d .in{position:relative;width:100%;height:100%;transition:transform .5s var(--ease);transform-style:preserve-3d}
+.c3d:hover:not(.flipped) .in{transform:translateY(-4px) rotate(-2deg)}
+.c3d.flipped .in{transform:rotateY(180deg)}
+.c3d .cb,.c3d .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face{transform:rotateY(180deg);background:var(--card-face);color:var(--card-ink);border:3px solid var(--card-ink);border-radius:8px;box-shadow:4px 4px 0 var(--sh);overflow:hidden}
+.face::before{content:"";position:absolute;inset:4px;border:2px solid var(--card-ink);border-radius:4px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Ccircle cx='2' cy='2' r='1.2' fill='%231c1a17' fill-opacity='.12'/%3E%3C/svg%3E")}
+.face .art{position:absolute;inset:4px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 4px}
+.face.rev .art{transform:rotate(180deg)}
+.face .num{min-width:32px;height:24px;padding:0 4px;display:grid;place-items:center;background:var(--yellow);border:2px solid var(--card-ink);border-radius:9999px}
+.face .ic{width:56px;height:56px;display:grid;place-items:center;border:2px solid var(--card-ink);border-radius:9999px;font-size:32px;color:#fffaf0}
+.face .ic.Major{background:var(--violet)} .face .ic.Wands{background:var(--red)} .face .ic.Cups{background:var(--blue)} .face .ic.Swords{background:#5e5648} .face .ic.Pentacles{background:#c99a12}
+.face .names{display:flex;flex-direction:column;align-items:center;text-align:center}
+.face .names .caption-5{color:#5e5648}
+.orient{display:inline-flex;gap:4px;align-items:center;border:3px solid var(--line);border-radius:9999px;padding:0 8px;background:var(--paper)}
+.orient.r{background:var(--red);color:#fffaf0;transform:rotate(-3deg)}
+.hidden-v{visibility:hidden}
+.extras{display:flex;flex-direction:column;gap:8px;margin-top:24px}
+
+/* result */
+.result{width:100%;min-height:280px;background:var(--paper);font-size:14px;line-height:20px}
+.toast{display:inline-flex;gap:8px;align-items:center;color:var(--muted);opacity:0;transition:opacity .3s var(--ease)}
+.toast.show{opacity:1}
+
+@media (max-width:760px){
+  .groups{grid-template-columns:repeat(2,1fr)}
+  .methods{grid-template-columns:repeat(2,1fr)}
+  .strip{grid-template-columns:repeat(4,1fr)}
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .types{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  .wrap{padding-block:24px 48px}
+  .top{flex-direction:column}
+  .sticker{align-self:flex-start}
+  .brand h1{font-size:30px;line-height:36px}
+  .logo{width:48px;height:48px;font-size:24px}
+  .panel{padding:40px 16px 24px;box-shadow:6px 6px 0 var(--sh)}
+  .slots{grid-template-columns:repeat(3,1fr);gap:24px 8px}
+  .c3d,.ph-slot,.slot .cb.fill{width:88px;height:144px}
+  .face .ic{width:40px;height:40px;font-size:24px}
+  .hold-row{grid-template-columns:1fr}
+  .mat{height:208px}
+  .sc{width:60px;height:94px;margin:-47px 0 0 -30px}
+  .cats{grid-template-columns:1fr}
+  .cat{flex-direction:row;align-items:center;min-height:0}
+  .cat-foot{width:auto;flex-direction:column;align-items:flex-end;gap:8px}
+  .type{gap:12px;padding:12px}
+  .pk{justify-content:flex-end}
+  .fan{grid-template-columns:repeat(auto-fill,minmax(32px,1fr));padding:12px}
+  .fan button{height:52px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important}
+  .flip .cb{opacity:.6}
+  .c3d .in{transition:opacity .3s linear}
+  .btn,.fan button .cb,.pile .cb,.pile .ord,.skip{transition:opacity .3s}
+}
+</style>
+</head>
+<body>
+<a class="skip button-sm" href="#panel">ข้ามไปที่โต๊ะไพ่</a>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><i class="ph-fill ph-sparkle"></i></div>
+      <div>
+        <h1 class="heading-3">โต๊ะไพ่ทาโรต์</h1>
+        <p class="body-6">สับ ตัด จั่ว และพลิกไพ่ด้วยมือคุณเอง สุ่มในเบราว์เซอร์ของคุณ ไม่มีใครเห็นลำดับไพ่ก่อน</p>
+      </div>
+    </div>
+    <span class="sticker caption-3">ทำเองทุกขั้น</span>
+  </header>
+  <ol class="strip" id="steps" aria-label="ขั้นตอน"></ol>
+  <main><section class="panel" id="panel" tabindex="-1" aria-live="polite"></section></main>
+</div>
+
+<script>
+/* ---------- data (keep SPREADS in sync with assets/spreads.json) ---------- */
+const MAJOR=[["The Fool","คนโง่/ผู้เริ่มต้น"],["The Magician","นักมายากล"],["The High Priestess","นักบวชหญิง"],["The Empress","จักรพรรดินี"],["The Emperor","จักรพรรดิ"],["The Hierophant","พระสังฆราช"],["The Lovers","คู่รัก"],["The Chariot","รถศึก"],["Strength","พละกำลัง"],["The Hermit","ฤาษี"],["Wheel of Fortune","กงล้อแห่งโชคชะตา"],["Justice","ความยุติธรรม"],["The Hanged Man","คนแขวน"],["Death","ความตาย/การเปลี่ยนแปลง"],["Temperance","ความพอดี"],["The Devil","ปีศาจ"],["The Tower","หอคอย"],["The Star","ดวงดาว"],["The Moon","ดวงจันทร์"],["The Sun","ดวงอาทิตย์"],["Judgement","การพิพากษา"],["The World","โลก"]];
+const MAJOR_ICON=["person-simple-walk","infinity","moon-stars","flower-lotus","crown","key","heart","horse","paw-print","lamp","arrows-clockwise","scales","hourglass","skull","drop-half","link","lightning","star","moon","sun","megaphone","globe-hemisphere-west"];
+const ROMAN=["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
+const SUITS=[["Wands","ไม้เท้า","magic-wand"],["Cups","ถ้วย","wine"],["Swords","ดาบ","sword"],["Pentacles","เหรียญ","coin"]];
+const RANKS=[["Ace","เอซ","A"],["Two","2","2"],["Three","3","3"],["Four","4","4"],["Five","5","5"],["Six","6","6"],["Seven","7","7"],["Eight","8","8"],["Nine","9","9"],["Ten","10","10"],["Page","เพจ","P"],["Knight","อัศวิน","Kn"],["Queen","ราชินี","Q"],["King","ราชา","K"]];
+const DECK=[];
+MAJOR.forEach(([en,th],i)=>DECK.push({en,th,num:ROMAN[i],suit:"Major",icon:MAJOR_ICON[i]}));
+SUITS.forEach(([s,sth,ic])=>RANKS.forEach(([r,rth,short])=>DECK.push({en:`${r} of ${s}`,th:`${rth} ${sth}`,num:short,suit:s,icon:ic})));
+
+const SPREADS={
+"one-card":["ไพ่ใบเดียว",["ข้อความ/พลังงานหลัก"]],
+"yes-no":["ใช่/ไม่ใช่",["แนวโน้มหลัก","ปัจจัยที่มีผล","ผลลัพธ์"]],
+"three-card":["อดีต · ปัจจุบัน · อนาคต",["อดีต/รากของเรื่อง","ปัจจุบัน","แนวโน้มอนาคต"]],
+"situation-obstacle-advice":["สถานการณ์ · อุปสรรค · คำแนะนำ",["สถานการณ์ตอนนี้","อุปสรรค/สิ่งที่ขวาง","คำแนะนำ"]],
+"mind-body-spirit":["ใจ · กาย · จิตวิญญาณ",["ความคิด","ร่างกาย/ชีวิตประจำวัน","จิตวิญญาณ/ส่วนลึก"]],
+"you-them-us":["เรา · เขา · ความสัมพันธ์",["ตัวเรา","ตัวเขา","ความสัมพันธ์ระหว่างกัน"]],
+"their-feelings":["เขารู้สึกอย่างไรกับเรา",["เขามองเราอย่างไร","สิ่งที่เขารู้สึก (ใจ)","สิ่งที่เขาคิด (หัว)","สิ่งที่เขามีแนวโน้มจะทำ"]],
+"new-love":["คนโสด/เนื้อคู่",["พลังงานความรักของเราตอนนี้","สิ่งที่ขวางความรักใหม่","ลักษณะคนที่กำลังจะเข้ามา","จะเจอได้อย่างไร/ที่ไหน","คำแนะนำ"]],
+"relationship":["ความสัมพันธ์ 7 ใบ",["ตัวเราในความสัมพันธ์","ตัวเขาในความสัมพันธ์","ฐาน/สิ่งที่เชื่อมเราไว้","จุดแข็ง","ปัญหา/ความท้าทาย","สิ่งที่ต้องทำ/คำแนะนำ","แนวโน้ม"]],
+"reconciliation":["คืนดี/คนรักเก่า",["ความสัมพันธ์ที่ผ่านมา","สาเหตุที่จบ/ห่าง","ความรู้สึกเขาตอนนี้","ความรู้สึกเราตอนนี้","โอกาสกลับมา","สิ่งที่ดีที่สุดสำหรับเรา"]],
+"two-paths":["เลือกทาง A/B",["สถานการณ์ตอนนี้","A: สิ่งที่ได้","A: สิ่งที่ต้องเจอ","A: แนวโน้มผล","B: สิ่งที่ได้","B: สิ่งที่ต้องเจอ","B: แนวโน้มผล","คำแนะนำ"]],
+"three-paths":["เลือก 3 ทาง",["สถานการณ์ตอนนี้","A: สิ่งที่ได้","A: สิ่งที่ต้องเจอ","A: แนวโน้มผล","B: สิ่งที่ได้","B: สิ่งที่ต้องเจอ","B: แนวโน้มผล","C: สิ่งที่ได้","C: สิ่งที่ต้องเจอ","C: แนวโน้มผล"]],
+"career":["การงาน",["สถานะงานตอนนี้","จุดแข็งที่เรามี","สิ่งที่ท้าทาย","สิ่งที่ซ่อนอยู่/ยังไม่เห็น","คำแนะนำ","แนวโน้ม"]],
+"finance":["การเงิน",["สถานะการเงินตอนนี้","สิ่งที่ทำให้เงินรั่ว","แหล่ง/โอกาสรายได้","คำแนะนำ","แนวโน้ม"]],
+"health-energy":["พลังงานกายใจ",["พลังงานร่างกาย","สภาพจิตใจ","สิ่งที่ควรปล่อย","วิธีดูแลตัวเอง"]],
+"family":["ครอบครัว",["บรรยากาศในบ้าน","บทบาทของเรา","บทบาทของอีกฝ่าย","รากของปัญหา","ทางประสาน"]],
+"lost-item":["ของหาย",["ของอยู่ที่ไหน","ทำไมถึงหาย","วิธีตามหา","แนวโน้มจะได้คืน"]],
+"timing":["ช่วงเวลา",["พลังงานตอนนี้","สิ่งที่ต้องเกิดก่อน","สิ่งที่ทำให้ช้า","ไพ่ชี้เวลา","ผลเมื่อถึงเวลา"]],
+"five-card":["กากบาท 5 ใบ",["ปัจจุบัน","อดีตที่มีผล","อนาคตอันใกล้","สาเหตุ/รากเรื่อง","ศักยภาพ/ผลที่เป็นไปได้"]],
+"horseshoe":["เกือกม้า",["อดีต","ปัจจุบัน","สิ่งที่ซ่อนอยู่","อุปสรรค","คนรอบข้าง/สิ่งแวดล้อม","คำแนะนำ","ผลลัพธ์"]],
+"celtic-cross":["เซลติกครอส",["ตัวเรื่อง/สถานการณ์","สิ่งที่ขวางหรือเสริม","รากของเรื่อง (จิตใต้สำนึก)","อดีตที่ผ่านไป","สิ่งที่อยู่ในใจ/เป้าหมาย","อนาคตอันใกล้","ตัวเรา/ท่าทีของเรา","สิ่งแวดล้อม/คนรอบตัว","ความหวังและความกลัว","ผลลัพธ์"]],
+"tree-of-life":["ต้นไม้แห่งชีวิต",["Kether — เป้าหมายสูงสุด","Chokmah — พลังสร้างสรรค์","Binah — ความเข้าใจ/ข้อจำกัด","Chesed — สิ่งที่ได้รับ/ความเมตตา","Geburah — ความขัดแย้ง/สิ่งที่ต้องตัด","Tiphareth — ศูนย์กลางตัวตน","Netzach — ความรัก/อารมณ์","Hod — ความคิด/การสื่อสาร","Yesod — จิตใต้สำนึก","Malkuth — โลกจริง/ผลลัพธ์"]],
+"weekly":["รายสัปดาห์",["วันจันทร์","วันอังคาร","วันพุธ","วันพฤหัสบดี","วันศุกร์","วันเสาร์","วันอาทิตย์"]],
+"year-ahead":["ดวงรายปี",["ธีมหลักของทั้งปี","เดือนที่ 1","เดือนที่ 2","เดือนที่ 3","เดือนที่ 4","เดือนที่ 5","เดือนที่ 6","เดือนที่ 7","เดือนที่ 8","เดือนที่ 9","เดือนที่ 10","เดือนที่ 11","เดือนที่ 12"]],
+"zodiac":["12 ภพ",["ภาพรวม","ภพ 1 ตัวตน","ภพ 2 เงินและสิ่งมีค่า","ภพ 3 การสื่อสาร พี่น้อง เดินทางใกล้","ภพ 4 บ้าน ครอบครัว","ภพ 5 ความรัก ความสนุก ลูก","ภพ 6 งานประจำ สุขภาพ","ภพ 7 คู่ครอง หุ้นส่วน","ภพ 8 สิ่งที่แบ่งปัน การเปลี่ยนแปลงลึก","ภพ 9 การเรียนสูง ต่างประเทศ ความเชื่อ","ภพ 10 อาชีพ ชื่อเสียง","ภพ 11 เพื่อน เครือข่าย ความหวัง","ภพ 12 จิตใต้สำนึก สิ่งที่ซ่อน"]],
+"chakra":["จักระ 7",["ราก (Root) ความมั่นคง","ศักดิ์สิทธิ์ (Sacral) อารมณ์/ความสร้างสรรค์","สุริยะ (Solar Plexus) พลังตัวตน","หัวใจ (Heart) ความรัก","ลำคอ (Throat) การสื่อสาร","ตาที่สาม (Third Eye) สัญชาตญาณ","มงกุฎ (Crown) จิตวิญญาณ"]],
+"shadow-work":["เงาในใจ",["เงาที่ซ่อน","เงานี้มาจากไหน","มันส่งผลอย่างไรตอนนี้","ของขวัญที่ซ่อนในเงา","วิธียอมรับและเยียวยา"]],
+"new-moon":["จันทร์ดับ ตั้งเจตนา",["สิ่งที่ควรเริ่ม","เมล็ดพันธุ์ที่มีอยู่แล้ว","สิ่งที่ต้องดูแล","อุปสรรค","สิ่งที่จะเติบโต"]],
+"full-moon":["จันทร์เพ็ญ ปล่อยวาง",["สิ่งที่สำเร็จ/เห็นผล","สิ่งที่ควรปล่อย","สิ่งที่ยังค้างคา","บทเรียน","ก้าวต่อไป"]]
+};
+
+/* ---------- randomness (crypto) ---------- */
+function rint(n){const a=new Uint32Array(1),lim=Math.floor(4294967296/n)*n;let x;do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);return x%n}
+function rnd(){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]/4294967296}
+function fy(arr){for(let i=arr.length-1;i>0;i--){const j=rint(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
+
+/* ---------- shuffles: deck[0] = top ---------- */
+function riffle(d){let k=0;for(let i=0;i<d.length;i++)if(rnd()<.5)k++;const L=d.slice(0,k),R=d.slice(k),o=[];while(L.length||R.length){if(rnd()<L.length/(L.length+R.length))o.push(L.shift());else o.push(R.shift())}return o}
+function overhand(d){let rem=d.slice(),o=[];while(rem.length){const s=1+rint(Math.min(10,rem.length));o=rem.slice(0,s).concat(o);rem=rem.slice(s)}return o}
+function wash(d){const o=fy(d.map(c=>({...c})));if(S.rev)o.forEach(c=>{if(rnd()<.5)c.r=!c.r});return o}
+function pile(d,k){const st=Array.from({length:k},()=>[]);d.forEach((c,i)=>st[i%k].unshift(c));return st.flat()}
+const JUMP={riffle:.02,overhand:.015,wash:0,pile:0};
+const MNAME={riffle:"Riffle",overhand:"Overhand",wash:"Wash",pile:"Pile"};
+const SFX={riffle:["ฟรึ่บ","แชะ แชะ","พรึ่บ"],overhand:["ตับ ตับ","ฟึ่บ","ปึก"],wash:["ซ่า","วืด","ฟู่"],pile:["ปึก ปึก","ตึ้ง","แปะ"]};
+
+/* ---------- state ---------- */
+const P=new URLSearchParams(location.search);
+const S={step:0,q:P.get("q")||"",spread:P.get("spread")||(P.get("n")?"custom":"three-card"),custom:Number(P.get("n"))||3,
+  labels:(P.get("labels")||"").split("|").filter(Boolean),ctx:P.get("ctx")||"",ctxChip:"",rev:P.get("rev")!=="0",pk:3,
+  deck:[],hist:[],counts:{},aside:[],pendingJump:null,cut:null,picks:[],drawn:[],need:0,bottom:null,cutsDone:0,fromTop:false};
+if(S.spread!=="custom"&&!SPREADS[S.spread])S.spread="three-card";
+S.custom=Math.max(1,Math.min(20,Math.round(S.custom)||3));
+const STEPS=[["หมวด"],["แบบไพ่"],["คำถาม"],["สับ"],["ตัด"],["จั่ว"],["เปิด"],["ผล"]];
+
+function positions(){if(S.spread==="custom")return Array.from({length:S.custom},(_,i)=>S.labels[i]||`ใบที่ ${i+1}`);return SPREADS[S.spread][1]}
+function spreadName(){return S.spread==="custom"?`กำหนดเอง ${S.custom} ใบ`:SPREADS[S.spread][0]}
+function labelFor(i){const p=positions();return i<p.length?p[i]:"ไพ่ขยายความ"}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const isRev=c=>!!(c.r&&S.rev);
+function orientTxt(c){return isRev(c)?"กลับหัว":"หัวตั้ง"}
+function orientPill(c){return `<span class="orient caption-3${isRev(c)?" r":""}"><i class="ph-bold ${isRev(c)?"ph-arrow-u-down-left":"ph-arrow-up"}"></i>${orientTxt(c)}</span>`}
+
+function newDeck(){S.deck=fy(DECK.map((c,id)=>({id,r:S.rev&&rnd()<.5})));S.hist=["หยิบสำรับ 78 ใบ"];S.counts={};S.logged={};S.aside=[];S.cutsDone=0}
+function faceHTML(c){const k=DECK[c.id];return `<div class="face${isRev(c)?" rev":""}"><div class="art"><div class="num caption-3">${k.num}</div><div class="ic ${k.suit}"><i class="ph-fill ph-${k.icon}"></i></div><div class="names"><span class="caption-3">${esc(k.en)}</span><span class="caption-5">${esc(k.th)}</span></div></div></div>`}
+function head(n,title){return `<span class="caption-box caption-3">ตอนที่ ${n}</span><h2 class="heading-5">${title}</h2>`}
+function bubble(text,icon="chat-circle-dots"){return `<div class="bubble"><i class="ph-bold ph-${icon}" aria-hidden="true"></i><p class="body-3">${text}</p></div>`}
+
+/* ---------- render ---------- */
+function render(){
+  $("#steps").innerHTML=STEPS.map(([s],i)=>`<li class="${i===S.step?"on":i<S.step?"done":""}" ${i===S.step?'aria-current="step"':""}><span class="n caption-3">ตอน ${i+1}</span><span class="t title-4">${s}</span></li>`).join("");
+  const p=$("#panel");p.classList.remove("enter");void p.offsetWidth;p.classList.add("enter");
+  [rCat,rType,rQ,r1,r2,r3,r4,r5][S.step]();
+}
+function go(step){S.step=step;render();const p=$("#panel");if(p.getBoundingClientRect().top<0)p.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"})}
+
+/* ---------- categories ---------- */
+const GROUPS=[
+ {id:"quick",name:"ถามสั้น ใบน้อย",icon:"lightning",tone:"yellow",desc:"ไพ่ประจำวัน คำถามเร็ว หรืออยากได้คำตอบใช่ไม่ใช่",ph:"เช่น วันนี้ควรโฟกัสเรื่องอะไร",list:["one-card","yes-no","three-card","situation-obstacle-advice","mind-body-spirit"]},
+ {id:"love",name:"ความรัก",icon:"heart",tone:"red",desc:"คนที่คุยอยู่ แฟน คนรักเก่า หรือคนโสดที่รอใครสักคน",ph:"เช่น เขารู้สึกอย่างไรกับเราตอนนี้",list:["you-them-us","their-feelings","new-love","relationship","reconciliation"]},
+ {id:"decide",name:"ตัดสินใจ",icon:"signpost",tone:"blue",desc:"ลังเลระหว่างทางเลือก อยากเห็นผลของแต่ละทาง",ph:"เช่น ควรย้ายงานใหม่ หรืออยู่ที่เดิมต่อ",list:["yes-no","two-paths","three-paths"]},
+ {id:"topic",name:"เจาะเรื่อง",icon:"briefcase",tone:"gold",desc:"งาน เงิน สุขภาพใจ ครอบครัว ของหาย หรือถามเวลา",ph:"เช่น แนวโน้มการงานในอีก 3 เดือน",list:["career","finance","health-energy","family","lost-item","timing"]},
+ {id:"deep",name:"อ่านละเอียด",icon:"squares-four",tone:"violet",desc:"เรื่องซับซ้อนหลายปัจจัย อยากเห็นภาพครบทุกมุม",ph:"เช่น ทำไมเรื่องนี้ถึงยังไม่คลี่คลาย",list:["five-card","horseshoe","celtic-cross","tree-of-life"]},
+ {id:"time",name:"ช่วงเวลา",icon:"calendar",tone:"blue",desc:"ดวงรายสัปดาห์ รายปี หรือภาพรวมทุกด้าน 12 ภพ",ph:"เช่น ภาพรวมของฉันในปีนี้",list:["weekly","year-ahead","zodiac"]},
+ {id:"spirit",name:"จิตวิญญาณ",icon:"moon-stars",tone:"violet",desc:"จักระ เงาในใจ และพิธีจันทร์ดับ จันทร์เพ็ญ",ph:"เช่น สิ่งที่ฉันควรปล่อยวางในรอบนี้",list:["chakra","shadow-work","new-moon","full-moon"]},
+ {id:"custom",name:"กำหนดเอง",icon:"sliders-horizontal",tone:"gold",desc:"เลือกจำนวนใบเอง 1 ถึง 20 ใบ แล้วบอกความหมายตำแหน่งในแชท",ph:"พิมพ์คำถามของคุณ",list:["custom"]}
+];
+const HINT={"one-card":"ไพ่ประจำวัน หรือคำแนะนำสั้น ๆ","yes-no":"อยากได้คำตอบว่าใช่หรือไม่","three-card":"ดูภาพรวมเรื่องใดก็ได้","situation-obstacle-advice":"ติดอยู่ อยากรู้ว่าควรทำอย่างไร","mind-body-spirit":"เช็กสมดุลตัวเอง","you-them-us":"ดูเราสองคนแบบเร็ว ๆ","their-feelings":"เขาคิดและรู้สึกอย่างไรกับเรา","new-love":"คนโสดที่อยากเจอคนใหม่","relationship":"คนที่คุยอยู่ หรือคู่รัก","reconciliation":"คนรักเก่า และโอกาสคืนดี","two-paths":"ลังเลระหว่างสองทาง","three-paths":"มีสามตัวเลือกให้ชั่งใจ","career":"งานปัจจุบัน หางาน หรือธุรกิจ","finance":"เงินเข้า เงินรั่ว และแนวโน้ม","health-energy":"พลังกายใจ และการดูแลตัวเอง","family":"เรื่องในบ้าน คนในครอบครัว","lost-item":"ของหาย ควรตามหาที่ไหน","timing":"อยากรู้ว่าจะเกิดเมื่อไหร่","five-card":"เรื่องหลายปัจจัย แบบกระชับ","horseshoe":"ปัญหาและทางออก","celtic-cross":"เจาะลึกเรื่องที่ซับซ้อน","tree-of-life":"สำรวจชีวิตเชิงจิตวิญญาณ","weekly":"พลังงานรายวันทั้งสัปดาห์","year-ahead":"ธีมทั้งปี และรายเดือน","zodiac":"ทุกด้านของชีวิต 12 ภพ","chakra":"สมดุลจักระทั้ง 7","shadow-work":"สำรวจด้านที่ซ่อนในใจ","new-moon":"ตั้งเจตนาเริ่มสิ่งใหม่","full-moon":"ปล่อยวางและทบทวน"};
+const grp=id=>GROUPS.find(g=>g.id===id)||GROUPS[0];
+function groupOf(id){return (GROUPS.find(g=>g.list.includes(id))||GROUPS[0]).id}
+function miniFan(n){const k=Math.min(n,10);return `<span class="mini" aria-hidden="true">${Array.from({length:k},(_,i)=>`<span style="--i:${i};--k:${k}"></span>`).join("")}${n>10?`<b class="caption-3">+${n-10}</b>`:""}</span>`}
+
+/* ตอน 1: เลือกหมวด */
+function rCat(){
+  $("#panel").innerHTML=`${head(1,"อยากถามเรื่องอะไร")}
+  ${bubble("เลือกหมวดที่ใกล้กับเรื่องในใจที่สุด แล้วค่อยเลือกรูปแบบการวางไพ่ในหน้าถัดไป","hand-pointing")}
+  <div class="cats">${GROUPS.map(g=>`<button class="btn cat" data-g="${g.id}">
+    <span class="cat-ic tone-${g.tone}"><i class="ph-bold ph-${g.icon}"></i></span>
+    <span class="cat-body"><span class="title-2">${g.name}</span><span class="body-6 cat-desc">${g.desc}</span></span>
+    <span class="cat-foot"><span class="cnt caption-3">${g.id==="custom"?"1 ถึง 20 ใบ":g.list.length+" แบบ"}</span><i class="ph-bold ph-arrow-right"></i></span>
+  </button>`).join("")}</div>`;
+  $$(".cat").forEach(b=>b.onclick=()=>{S.group=b.dataset.g;go(1)});
+}
+
+/* ตอน 2: เลือกแบบ */
+function rType(){
+  const g=grp(S.group);
+  const top=`<button class="btn button-sm back-link" id="toCat"><i class="ph-bold ph-arrow-left"></i>หมวดทั้งหมด</button>
+  <div class="type-head"><span class="cat-ic tone-${g.tone}"><i class="ph-bold ph-${g.icon}"></i></span><div><h2 class="heading-5">${g.name}</h2><p class="body-6 muted">${g.desc}</p></div></div>`;
+  if(g.id==="custom"){
+    $("#panel").innerHTML=`<span class="caption-box caption-3">ตอนที่ 2</span>${top}
+    <div class="custom-box"><label class="title-3" for="cn">ต้องการกี่ใบ</label>
+    <div class="stepper"><button class="btn button-md" id="dec" aria-label="ลดจำนวน"><i class="ph-bold ph-minus"></i></button><input id="cn" type="number" min="1" max="20" value="${S.custom}" inputmode="numeric"><button class="btn button-md" id="inc" aria-label="เพิ่มจำนวน"><i class="ph-bold ph-plus"></i></button></div>
+    <div id="cprev">${miniFan(S.custom)}</div>
+    <p class="body-6 muted">ตำแหน่งจะเรียกเป็นใบที่ 1, 2, 3 ไปก่อน แล้วค่อยบอกความหมายของแต่ละใบในแชท</p>
+    <p class="warn body-6" id="cnErr" hidden>ใส่จำนวนระหว่าง 1 ถึง 20 ใบ</p></div>
+    <div class="actions"><span class="spacer"></span><button class="btn primary button-md" id="useC">ใช้ ${S.custom} ใบนี้ <i class="ph-bold ph-arrow-right"></i></button></div>`;
+    const cn=$("#cn");
+    const set=v=>{v=Math.max(1,Math.min(20,Math.round(v)||1));cn.value=v;S.custom=v;$("#cnErr").hidden=true;$("#cprev").innerHTML=miniFan(v);$("#useC").innerHTML=`ใช้ ${v} ใบนี้ <i class="ph-bold ph-arrow-right"></i>`};
+    $("#dec").onclick=()=>set(S.custom-1);$("#inc").onclick=()=>set(S.custom+1);
+    cn.oninput=()=>{const v=Number(cn.value);if(v>=1&&v<=20)set(v)};
+    $("#useC").onclick=()=>{const v=Number(cn.value);if(!(v>=1&&v<=20)){$("#cnErr").hidden=false;cn.focus();return}set(v);S.spread="custom";go(2)};
+  }else{
+    $("#panel").innerHTML=`<span class="caption-box caption-3">ตอนที่ 2</span>${top}
+    <div class="types">${g.list.map(id=>{const [n,p]=SPREADS[id];return `<button class="btn type${id===S.spread?" cur":""}" data-s="${id}">
+      ${miniFan(p.length)}
+      <span class="type-body"><span class="type-top"><span class="title-2">${esc(n)}</span><span class="cnt caption-3">${p.length} ใบ</span></span>
+      <span class="body-6 hint">${esc(HINT[id]||"")}</span>
+      <span class="caption-5 pos">${p.slice(0,3).map(esc).join(" · ")}${p.length>3?" ฯลฯ":""}</span></span>
+      <i class="ph-bold ph-arrow-right go-ic"></i></button>`}).join("")}</div>`;
+    $$(".type").forEach(b=>b.onclick=()=>{S.spread=b.dataset.s;go(2)});
+  }
+  $("#toCat").onclick=()=>go(0);
+}
+
+/* ตอน 3: คำถาม + บริบท */
+const CTX={
+ love:{label:"สถานะความรักตอนนี้",chips:["โสด ยังไม่มีใคร","แอบชอบใครอยู่","คุย ๆ กันอยู่","คบกันอยู่","แต่งงานหรืออยู่ด้วยกัน","เพิ่งเลิกหรือห่างกัน","ซับซ้อน"],ph:"เช่น คุยกันมา 2 เดือน ช่วงนี้เขาตอบช้าลง"},
+ topic:{label:"สถานะตอนนี้ (ถ้าถามเรื่องงานหรือการเรียน)",chips:["ทำงานประจำ","ฟรีแลนซ์","เจ้าของธุรกิจ","กำลังหางาน","นักเรียนหรือนักศึกษา"],ph:"เช่น ทำงานมา 3 ปี กำลังคิดจะย้ายสายงาน"},
+ decide:{label:"",chips:[],ph:"ตัวเลือก A คือ ... ตัวเลือก B คือ ..."},
+ quick:{label:"",chips:[],ph:"เช่น ช่วงนี้กำลังเตรียมสอบปลายภาค"},
+ deep:{label:"",chips:[],ph:"เล่าสถานการณ์สั้น ๆ ว่าเกิดอะไรขึ้นบ้าง"},
+ time:{label:"",chips:[],ph:"เช่น ปีนี้วางแผนจะย้ายงานและเก็บเงิน"},
+ spirit:{label:"",chips:[],ph:"เช่น ช่วงนี้รู้สึกติดอยู่กับเรื่องเดิมซ้ำ ๆ"},
+ custom:{label:"",chips:[],ph:"ถ้าแต่ละใบมีความหมายเฉพาะ เขียนไว้ตรงนี้ได้ เช่น ใบที่ 1 คือ..."}
+};
+function rQ(){
+  const g=grp(S.group),pos=positions(),cx=CTX[g.id]||CTX.quick;
+  const needCtx=S.spread==="two-paths"||S.spread==="three-paths";
+  $("#panel").innerHTML=`${head(3,"ตั้งจิตถึงคำถาม")}
+  <div class="chosen">
+    <div class="chosen-top">${miniFan(pos.length)}<div class="chosen-name"><span class="caption-3">${g.name}</span><span class="heading-6">${esc(spreadName())}</span></div>
+    <button class="btn button-sm" id="change"><i class="ph-bold ph-arrows-clockwise"></i>เปลี่ยนแบบ</button></div>
+    <ol class="pos-list">${pos.map((p,i)=>`<li><span class="pn caption-3">${i+1}</span><span class="body-6">${esc(p)}</span></li>`).join("")}</ol>
+  </div>
+  ${bubble("หายใจลึก ๆ สองสามครั้ง นึกถึงคำถามให้ชัด เล่าบริบทเพิ่มนิดหน่อยจะช่วยให้คำทำนายตรงเรื่องของคุณมากขึ้น")}
+  <label class="f title-3" for="q">คำถามของคุณ</label>
+  <textarea id="q" class="body-3" placeholder="${esc(g.ph)}">${esc(S.q)}</textarea>
+  ${cx.chips.length?`<p class="f title-3" id="chipLbl">${cx.label} <span class="caption-5 muted">ไม่บังคับ</span></p>
+  <div class="ctx-chips" role="radiogroup" aria-labelledby="chipLbl">${cx.chips.map(c=>`<button class="chip body-5${S.ctxChip===c?" on":""}" role="radio" aria-checked="${S.ctxChip===c}" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>`:""}
+  <label class="f title-3" for="ctx">${needCtx?"ตัวเลือกที่ลังเลอยู่":"บริบทเพิ่มเติม"} <span class="caption-5 muted">${needCtx?"ควรใส่ เพื่อให้รู้ว่า A กับ B คืออะไร":"ไม่บังคับ"}</span></label>
+  <textarea id="ctx" class="body-3 short" placeholder="${esc(cx.ph)}">${esc(S.ctx)}</textarea>
+  <label class="toggle body-3"><input type="checkbox" id="rv" ${S.rev?"checked":""}> ใช้ไพ่กลับหัว</label>
+  <div class="actions"><button class="btn button-md" id="back"><i class="ph-bold ph-arrow-left"></i> เลือกแบบใหม่</button><button class="btn primary button-md" id="go">หยิบสำรับ แล้วเริ่มสับ <i class="ph-bold ph-arrow-right"></i></button></div>`;
+  $("#q").oninput=e=>{S.q=e.target.value};
+  $("#ctx").oninput=e=>{S.ctx=e.target.value};
+  $("#rv").onchange=e=>{S.rev=e.target.checked};
+  $$(".chip").forEach(b=>b.onclick=()=>{S.ctxChip=S.ctxChip===b.dataset.c?"":b.dataset.c;$$(".chip").forEach(x=>{const on=x.dataset.c===S.ctxChip;x.classList.toggle("on",on);x.setAttribute("aria-checked",on)})});
+  $("#change").onclick=()=>go(1);
+  $("#back").onclick=()=>go(1);
+  $("#go").onclick=()=>{S.q=$("#q").value.trim();S.ctx=$("#ctx").value.trim();S.rev=$("#rv").checked;newDeck();go(3)};
+}
+
+function doShuffle(m,k){
+  if(m==="riffle")S.deck=riffle(S.deck);else if(m==="overhand")S.deck=overhand(S.deck);else if(m==="wash")S.deck=wash(S.deck);else S.deck=pile(S.deck,k);
+  const key=m==="pile"?`Pile ${k} กอง`:MNAME[m];S.counts[key]=(S.counts[key]||0)+1;
+  if(!S.pendingJump&&rnd()<JUMP[m]&&S.deck.length)S.pendingJump=S.deck.splice(rint(S.deck.length),1)[0];
+}
+function shuffleSummary(){const e=Object.entries(S.counts);return e.length?e.map(([k,v])=>`${k} ×${v}`).join(" · "):"ยังไม่ได้สับ"}
+
+/* ---------- shuffle animations (transform + opacity only) ---------- */
+const N_SC=12;
+const EASE="cubic-bezier(0.22,1,0.36,1)";
+const reduceMotion=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
+const scY=i=>-i*1.4;
+const scR=i=>((i*37)%7-3)*0.6;
+const TF=(x,y,r,s)=>`translate(${x.toFixed(1)}px,${y.toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s==null?1:s})`;
+const baseTF=i=>TF((i%3-1)*0.6,scY(i),scR(i),1);
+const rr=(a,b)=>a+rnd()*(b-a);
+function tableHTML(){return `<div class="mat" id="stk">${Array.from({length:N_SC},(_,i)=>`<div class="cb sc" style="transform:${baseTF(i)}"></div>`).join("")}<span class="count caption-3">${S.deck.length} ใบ</span></div>`}
+function animShuffle(m,opt={}){
+  const mat=$("#stk");if(!mat)return;
+  const cards=[...mat.querySelectorAll(".sc")];
+  cards.forEach(c=>c.getAnimations().forEach(a=>a.cancel()));
+  if(reduceMotion()){mat.animate([{opacity:1},{opacity:.55},{opacity:1}],{duration:400,easing:EASE});return}
+  const W=mat.clientWidth,H=mat.clientHeight,fast=!!opt.fast;
+  const play=(c,frames,dur)=>c.animate(frames.map(f=>({easing:EASE,...f})),{duration:dur});
+  const N=cards.length,half=N/2;
+  if(m==="riffle"){
+    const span=Math.min(130,W/2-56),dur=fast?460:980;
+    cards.forEach((c,i)=>{
+      const side=i<half?-1:1,rank=side<0?2*i:2*(i-half)+1;
+      play(c,[
+        {transform:baseTF(i),offset:0},
+        {transform:TF(side*span,-24+scY(i%half),side*12,1.02),offset:.26},
+        {transform:TF(side*span*.92,scY(i%half),side*16,1),offset:.36+rank*.028},
+        {transform:TF(side*span*.12,scY(rank)-30,-side*6,1),offset:.5+rank*.028},
+        {transform:TF(0,scY(rank)+4,0,.98),offset:.9},
+        {transform:baseTF(i),offset:1}],dur);
+    });
+  }else if(m==="overhand"){
+    const dur=fast?520:1050;
+    cards.forEach((c,i)=>{
+      const top=N-1-i,chunk=Math.min(2,Math.floor(top/4)),s=.06+chunk*.27,jx=(chunk-1)*14;
+      play(c,[
+        {transform:baseTF(i),offset:0},
+        {transform:baseTF(i),offset:s},
+        {transform:TF(jx,scY(i)-96,-6+chunk*5,1.03),offset:s+.12},
+        {transform:TF(jx*.4,scY(i)-8,chunk*2,1),offset:s+.24},
+        {transform:baseTF(i),offset:1}],dur);
+    });
+  }else if(m==="wash"){
+    const dur=fast?640:1300,mx=W/2-48,my=H/2-48;
+    cards.forEach((c,i)=>{
+      const flip=rnd()<.5?180:0;
+      play(c,[
+        {transform:baseTF(i),offset:0},
+        {transform:TF(rr(-mx,mx),rr(-my,my),rr(-160,160),1),offset:.32},
+        {transform:TF(rr(-mx,mx),rr(-my,my),rr(-320,320)+flip,1),offset:.66},
+        {transform:TF(rr(-12,12),scY(i)+rr(-6,6),rr(-20,20)+360,1),offset:.88},
+        {transform:TF((i%3-1)*0.6,scY(i),scR(i)+360,1),offset:1}],dur);
+    });
+  }else{
+    const k=Math.max(2,Math.min(7,opt.k||3)),dur=fast?700:1400,sp=Math.min(84,(W-90)/(k-1));
+    cards.forEach((c,i)=>{
+      const d=N-1-i,p=d%k,row=Math.floor(d/k),x=(p-(k-1)/2)*sp,t=.04+d*(.42/N),g=.66+p*(.24/k);
+      play(c,[
+        {transform:baseTF(i),offset:0},
+        {transform:baseTF(i),offset:t},
+        {transform:TF(x,-row*2.2,rr(-5,5),1),offset:t+.1},
+        {transform:TF(x,-row*2.2,rr(-5,5),1),offset:g},
+        {transform:TF(0,scY(i)-14,0,1),offset:g+.06},
+        {transform:baseTF(i),offset:1}],dur);
+    });
+  }
+}
+function flyJumper(){
+  const mat=$("#stk");if(!mat||reduceMotion())return;
+  const f=document.createElement("div");f.className="cb sc fly";f.style.transform=baseTF(N_SC);mat.appendChild(f);
+  const W=mat.clientWidth;
+  f.animate([{transform:baseTF(N_SC),opacity:1},{transform:TF(W/2-56,-150,220,1.1),opacity:1,offset:.6},{transform:TF(W/2-40,-120,300,1),opacity:0}],{duration:900,easing:EASE}).onfinish=()=>f.remove();
+}
+
+function r1(){
+  $("#panel").innerHTML=`${head(4,"สับไพ่")}
+  ${bubble(`สับวิธีไหนก็ได้ กี่ครั้งก็ได้ หยุดเมื่อใจบอกว่าพอ${S.rev?" ส่วน Wash จะทำให้ไพ่บางใบกลับหัว":""}`)}
+  <div class="stage">${tableHTML()}
+    <div class="sfx" id="sfx" aria-hidden="true"><div class="b1"></div><div class="b2"></div><span>ฟรึ่บ</span></div></div>
+  <div class="methods">
+    <button class="btn method" data-m="riffle"><i class="ph-duotone ph-shuffle"></i><span class="title-3">Riffle</span><small class="caption-5">ผ่าครึ่งแล้วสลับเข้ากัน</small></button>
+    <button class="btn method" data-m="overhand"><i class="ph-duotone ph-hand-grabbing"></i><span class="title-3">Overhand</span><small class="caption-5">ดึงทีละกำจากบนลงล่าง</small></button>
+    <button class="btn method" data-m="wash"><i class="ph-duotone ph-waves"></i><span class="title-3">Wash</span><small class="caption-5">กองบนโต๊ะแล้ววนมือ</small></button>
+    <button class="btn method" data-m="pile"><i class="ph-duotone ph-stack"></i><span class="title-3">Pile</span><small class="caption-5">แจกเป็น ${S.pk} กองแล้วรวม</small></button>
+  </div>
+  <div class="hold-row"><button class="btn blue button-md hold" id="hold"><i class="ph-bold ph-hand-pointing"></i>กดค้างไว้ สับต่อเนื่อง</button>
+  <label class="pk body-6">Pile กี่กอง <select id="pk" class="body-6">${[2,3,4,5,6,7].map(n=>`<option${n===S.pk?" selected":""}>${n}</option>`).join("")}</select></label></div>
+  <p class="log body-6" id="log"><i class="ph-bold ph-clock-counter-clockwise"></i><span>สับแล้ว: ${shuffleSummary()}</span></p>
+  <div id="jump"></div>
+  <div class="actions"><button class="btn button-md" id="back"><i class="ph-bold ph-arrow-left"></i> แก้คำถาม</button><button class="btn primary button-md" id="next" ${Object.keys(S.counts).length?"":"disabled"}>พอแล้ว ไปตัดไพ่ <i class="ph-bold ph-arrow-right"></i></button></div>`;
+  const anim=(m,fast)=>{const f=$("#sfx");animShuffle(m,{fast,k:S.pk});f.classList.remove("pop");void f.offsetWidth;const w=SFX[m];f.querySelector("span").textContent=w[rint(w.length)];f.classList.add("pop")};
+  const after=hadJump=>{$("#log span").textContent="สับแล้ว: "+shuffleSummary();$(".count").textContent=S.deck.length+" ใบ";$("#next").disabled=false;if(!hadJump&&S.pendingJump){flyJumper();setTimeout(showJump,520)}else showJump()};
+  $$(".method").forEach(b=>b.onclick=()=>{if(S.pendingJump)return;const m=b.dataset.m;doShuffle(m,S.pk);anim(m,false);after(false)});
+  $("#pk").onchange=e=>{S.pk=Number(e.target.value);$('[data-m="pile"] small').textContent=`แจกเป็น ${S.pk} กองแล้วรวม`};
+  let t=null;const h=$("#hold");
+  const stop=()=>{clearInterval(t);t=null;h.classList.remove("active")};
+  const start=e=>{e.preventDefault();if(t||S.pendingJump)return;h.classList.add("active");const tick=()=>{doShuffle("riffle");anim("riffle",true);after(false);if(S.pendingJump)stop()};tick();t=setInterval(tick,500)};
+  h.addEventListener("pointerdown",start);["pointerup","pointerleave","pointercancel"].forEach(ev=>h.addEventListener(ev,stop));
+  h.addEventListener("keydown",e=>{if((e.key===" "||e.key==="Enter")&&!S.pendingJump){e.preventDefault();doShuffle("riffle");anim("riffle",true);after(false)}});
+  $("#back").onclick=()=>go(2);
+  $("#next").onclick=()=>{const d=Object.entries(S.counts).map(([k,v])=>[k,v-(S.logged[k]||0)]).filter(x=>x[1]>0);if(d.length)S.hist.push("สับ: "+d.map(([k,v])=>`${k} ×${v}`).join(" · "));S.logged={...S.counts};S.cut=null;go(4)};
+  showJump();
+}
+function showJump(){
+  const box=$("#jump");if(!box)return;
+  if(!S.pendingJump){box.innerHTML="";return}
+  const c=S.pendingJump,k=DECK[c.id];
+  box.innerHTML=`<div class="alert" role="status"><div class="c3d flipped" aria-hidden="true"><div class="in"><div class="cb"></div>${faceHTML(c)}</div></div>
+  <div class="txt"><span class="title-2">มีไพ่กระเด็นออกมาระหว่างสับ</span><span class="body-3">${esc(k.en)} (${esc(k.th)}) ${orientPill(c)}</span><span class="body-6" style="color:var(--muted)">หลายคนถือว่าเป็นข้อความเสริมจากไพ่ เลือกได้ว่าจะเก็บไว้หรือใส่คืน</span>
+  <div class="row"><button class="btn primary button-sm" id="keepJ"><i class="ph-bold ph-bookmark-simple"></i>เก็บไว้อ่านเสริม</button><button class="btn button-sm" id="retJ"><i class="ph-bold ph-arrow-counter-clockwise"></i>ใส่คืนสำรับ</button></div></div></div>`;
+  $("#keepJ").onclick=()=>{S.aside.push(c);S.hist.push(`ไพ่กระเด็น: ${k.en} (${orientTxt(c)}) เก็บไว้อ่าน`);S.pendingJump=null;showJump()};
+  $("#retJ").onclick=()=>{S.deck.splice(rint(S.deck.length+1),0,c);S.hist.push("ไพ่กระเด็น 1 ใบ ใส่คืนสำรับ");S.pendingJump=null;showJump()};
+}
+
+function r2(){
+  const n=S.deck.length;
+  if(!S.cut)S.cut={k:2,points:[Math.round(n/2)],order:[],turn:[]};
+  const C=S.cut;
+  const pts=[...new Set(C.points)].sort((a,b)=>a-b);
+  const bounds=[0,...pts,n];const sizes=bounds.slice(1).map((b,i)=>b-bounds[i]);
+  const ok=pts.length===C.k-1&&sizes.every(s=>s>0);
+  const allOrdered=C.order.length===C.k;
+  $("#panel").innerHTML=`${head(5,"ตัดไพ่")}
+  ${bubble(`ใช้มือซ้ายตัดเป็นกี่กองก็ได้ เลื่อนจุดตัด แล้วแตะกองตามลำดับที่อยากวางกลับ กองที่แตะก่อนจะอยู่บนสุด${S.cutsDone?` (ตัดไปแล้ว ${S.cutsDone} ครั้ง)`:""}`,"scissors")}
+  <label class="f title-3" for="kk">จำนวนกอง</label>
+  <select id="kk" class="body-3">${[1,2,3,4,5].map(k=>`<option value="${k}"${k===C.k?" selected":""}>${k===1?"ไม่ตัด":k+" กอง"}</option>`).join("")}</select>
+  ${C.k>1?`<div class="points">${C.points.map((p,i)=>`<label class="f title-4" for="pt${i}">จุดตัดที่ ${i+1}</label><div class="slider-row"><span class="caption-5">บน</span><input type="range" id="pt${i}" min="1" max="${n-1}" value="${p}"><span class="caption-3">ใบที่ <b>${p}</b></span></div>`).join("")}</div>`:""}
+  ${ok?"":`<p class="warn body-6">จุดตัดซ้ำกันหรือชิดกันเกินไป ลองเลื่อนให้ห่างกันอีกนิด</p>`}
+  ${C.k>1&&ok?`<div class="piles">${sizes.map((s,i)=>{const o=C.order.indexOf(i);return `<div class="pile-wrap">
+    <button class="btn pile${o>=0?" ordered":""}" data-p="${i}" aria-label="กองที่ ${i+1} มี ${s} ใบ${o>=0?` ลำดับที่ ${o+1}`:""}"><span class="ord caption-3">${o>=0?o+1:""}</span>
+    <div class="cb${C.turn.includes(i)?" turned":""}" style="height:${Math.max(48,Math.min(112,40+s*1.5))}px"></div><span class="caption-3">กอง ${i+1} · ${s} ใบ</span>${C.turn.includes(i)?`<span class="orient caption-3 r"><i class="ph-bold ph-arrow-u-down-left"></i>กลับหัว</span>`:""}</button>
+    ${S.rev?`<label class="mini-toggle caption-5"><input type="checkbox" data-t="${i}" ${C.turn.includes(i)?"checked":""}> หมุนกลับหัว</label>`:""}</div>`}).join("")}</div>`:""}
+  ${C.k>1?`<div class="row" style="justify-content:center;margin-top:16px"><button class="btn button-sm" id="apply" ${ok&&allOrdered?"":"disabled"}><i class="ph-bold ph-stack"></i>${allOrdered?"รวมกองตามลำดับนี้":`แตะเลือกอีก ${C.k-C.order.length} กอง`}</button>${C.order.length?`<button class="btn button-sm" id="reset"><i class="ph-bold ph-eraser"></i>ล้างลำดับ</button>`:""}</div>`:""}
+  <p class="log body-6"><i class="ph-bold ph-clock-counter-clockwise"></i><span>${esc(S.hist.slice(-3).join(" → "))}</span></p>
+  <div class="actions"><button class="btn button-md" id="back"><i class="ph-bold ph-arrow-left"></i> สับเพิ่ม</button><button class="btn primary button-md" id="next">${S.cutsDone||C.k===1?"ไปจั่วไพ่":"ข้ามการตัด ไปจั่วไพ่"} <i class="ph-bold ph-arrow-right"></i></button></div>`;
+  $("#kk").onchange=e=>{const k=Number(e.target.value);S.cut={k,points:Array.from({length:k-1},(_,i)=>Math.round(n*(i+1)/k)),order:[],turn:[]};r2()};
+  C.points.forEach((_,i)=>{const el=$("#pt"+i);if(!el)return;el.oninput=e=>{C.points[i]=Number(e.target.value);e.target.parentElement.querySelector("b").textContent=e.target.value};el.onchange=()=>{C.order=[];r2();$("#pt"+i)&&$("#pt"+i).focus()}});
+  $$(".pile").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.p);const o=C.order.indexOf(i);if(o>=0)C.order.splice(o,1);else C.order.push(i);r2();$(`.pile[data-p="${i}"]`).focus()});
+  $$("[data-t]").forEach(cb=>cb.onchange=()=>{const i=Number(cb.dataset.t);C.turn=cb.checked?[...C.turn,i]:C.turn.filter(x=>x!==i);r2()});
+  if($("#reset"))$("#reset").onclick=()=>{C.order=[];r2()};
+  if($("#apply"))$("#apply").onclick=()=>{
+    let stacks=sizes.map((_,i)=>S.deck.slice(bounds[i],bounds[i+1]));
+    C.turn.forEach(i=>{stacks[i]=stacks[i].slice().reverse().map(c=>({...c,r:!c.r}))});
+    S.deck=C.order.map(i=>stacks[i]).flat();S.cutsDone++;
+    S.hist.push(`ตัด ${C.k} กอง (${sizes.join("/")} ใบ) รวมลำดับ ${C.order.map(i=>i+1).join(",")}${C.turn.length?` หมุนกอง ${C.turn.map(i=>i+1).join(",")}`:""}`);
+    S.cut=null;r2()};
+  $("#back").onclick=()=>go(3);
+  $("#next").onclick=()=>{if(!S.cutsDone)S.hist.push("ไม่ตัดไพ่");S.need=positions().length;S.picks=[];go(5)};
+}
+
+function r3(){
+  setTimeout(()=>{S.justPicked=false},0);
+  const need=S.need-S.drawn.length,n=S.deck.length;
+  $("#panel").innerHTML=`${head(6,"จั่วไพ่")}
+  ${bubble(`ไพ่ ${n} ใบแผ่คว่ำอยู่บนโต๊ะ แตะเลือก <b>${need} ใบ</b> ที่รู้สึกดึงดูด ใบที่เลือกก่อนจะไปอยู่ตำแหน่งแรกก่อน`,"hand-grabbing")}
+  <div class="spread-name"><span class="tag caption-3"><i class="ph-bold ph-squares-four"></i>${esc(spreadName())}</span><span class="tag caption-3" id="cnt">เลือกแล้ว ${S.picks.length}/${need}</span></div>
+  <div class="slots">${Array.from({length:S.need},(_,i)=>{const filled=i<S.drawn.length||i-S.drawn.length<S.picks.length;return `<div class="slot"><div class="pos caption-5"><b>${i+1}.</b>&nbsp;${esc(labelFor(i))}</div>${filled?`<div class="cb fill${S.justPicked&&i===S.drawn.length+S.picks.length-1?" new":""}"></div>`:`<div class="ph-slot"></div>`}</div>`}).join("")}</div>
+  <div class="fan" role="group" aria-label="ไพ่ที่แผ่ไว้">${S.deck.map((_,i)=>{const o=S.picks.indexOf(i);return `<button data-i="${i}" class="${o>=0?"sel":""}" aria-pressed="${o>=0}" aria-label="ใบที่ ${i+1}"><div class="cb"></div><span class="caption-3">${o>=0?o+1+S.drawn.length:i+1}</span></button>`}).join("")}</div>
+  <div class="row" style="margin-top:24px"><button class="btn button-sm" id="undo" ${S.picks.length?"":"disabled"}><i class="ph-bold ph-arrow-u-up-left"></i>ยกเลิกใบล่าสุด</button><button class="btn button-sm" id="top" ${S.picks.length?"disabled":""}><i class="ph-bold ph-arrow-line-up"></i>จั่วจากบนสุดให้ครบ</button></div>
+  <div class="actions"><button class="btn button-md" id="back" ${S.drawn.length?"hidden":""}><i class="ph-bold ph-arrow-left"></i> ตัดใหม่</button><span class="spacer"></span><button class="btn primary button-md" id="ok" ${S.picks.length===need?"":"disabled"}>ยืนยัน แล้วเปิดไพ่ <i class="ph-bold ph-arrow-right"></i></button></div>`;
+  $$(".fan button").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.i);const o=S.picks.indexOf(i);if(o>=0)S.picks.splice(o,1);else if(S.picks.length<need)S.picks.push(i);else return;S.justPicked=o<0;const y=window.scrollY;r3();window.scrollTo(0,y);const nb=$(`.fan button[data-i="${i}"]`);nb&&nb.focus({preventScroll:true})});
+  $("#undo").onclick=()=>{S.picks.pop();S.justPicked=false;r3()};
+  $("#top").onclick=()=>{S.picks=Array.from({length:Math.min(need,n)},(_,i)=>i);S.fromTop=true;r3()};
+  $("#back").onclick=()=>{S.picks=[];go(4)};
+  $("#ok").onclick=()=>{
+    S.hist.push(S.fromTop?`จั่วจากบนสุด ${S.picks.length} ใบ`:`เลือกตำแหน่ง ${S.picks.map(i=>i+1).join(", ")} จาก ${n} ใบ`);
+    const chosen=S.picks.map(i=>S.deck[i]);
+    S.picks.slice().sort((a,b)=>b-a).forEach(i=>S.deck.splice(i,1));
+    chosen.forEach(c=>S.drawn.push({...c,open:false}));
+    S.picks=[];S.fromTop=false;go(6)};
+}
+
+function r4(){
+  const all=S.drawn.every(d=>d.open);
+  $("#panel").innerHTML=`${head(7,"เปิดไพ่")}
+  ${bubble(all?"เปิดครบแล้ว ดูให้ทั่ว แล้วไปหน้าผลลัพธ์เพื่อส่งกลับในแชท":"แตะไพ่ทีละใบเพื่อพลิก ค่อย ๆ ดูไปตามลำดับก็ได้","cards")}
+  <div class="slots">${S.drawn.map((d,i)=>`<div class="slot"><div class="pos caption-5"><b>${i+1}.</b>&nbsp;${esc(labelFor(i))}</div>
+    <button class="c3d${d.open?" flipped":""}" data-i="${i}" aria-label="${d.open?esc(DECK[d.id].en+" "+orientTxt(d)):"พลิกไพ่ใบที่ "+(i+1)}"><div class="in"><div class="cb"></div>${faceHTML(d)}</div></button>
+    <div class="${d.open?"":"hidden-v"}">${orientPill(d)}</div></div>`).join("")}</div>
+  ${S.aside.length||S.bottom?`<div class="extras">${S.aside.length?`<p class="body-6"><i class="ph-bold ph-sparkle"></i> ไพ่กระเด็นที่เก็บไว้: ${S.aside.map(c=>esc(DECK[c.id].en)+" ("+orientTxt(c)+")").join(", ")}</p>`:""}${S.bottom?`<p class="body-6"><i class="ph-bold ph-arrow-line-down"></i> ไพ่ก้นสำรับ: ${esc(DECK[S.bottom.id].en)} (${orientTxt(S.bottom)})</p>`:""}</div>`:""}
+  <div class="row" style="margin-top:24px"><button class="btn button-sm" id="openAll" ${all?"disabled":""}><i class="ph-bold ph-cards"></i>พลิกทั้งหมด</button>
+  <button class="btn button-sm" id="bot" ${S.bottom||!all||!S.deck.length?"disabled":""}><i class="ph-bold ph-arrow-line-down"></i>ดูไพ่ก้นสำรับ</button>
+  <button class="btn button-sm" id="clar" ${all&&S.deck.length?"":"disabled"}><i class="ph-bold ph-plus"></i>จั่วไพ่ขยายความ</button></div>
+  <div class="actions"><span class="spacer"></span><button class="btn primary button-md" id="res" ${all?"":"disabled"}>${RET?"ส่งผลกลับไปที่แชท":canSendClaude()?"ส่งให้ Claude อ่านไพ่":SAMPLE&&!S.readOff?"ดูคำทำนาย":"ดูผลลัพธ์"} <i class="ph-bold ph-arrow-right"></i></button></div>`;
+  $$(".c3d").forEach(b=>b.onclick=()=>{const d=S.drawn[Number(b.dataset.i)];if(d.open)return;d.open=true;b.classList.add("flipped");setTimeout(()=>{const y=window.scrollY;r4();$("#panel").classList.remove("enter");window.scrollTo(0,y)},520)});
+  $("#openAll").onclick=()=>{S.drawn.forEach(d=>d.open=true);r4()};
+  $("#bot").onclick=()=>{S.bottom=S.deck[S.deck.length-1];S.hist.push("เปิดไพ่ก้นสำรับ");r4()};
+  $("#clar").onclick=()=>{S.need++;S.picks=[];go(5)};
+  $("#res").onclick=()=>{if(canSendClaude()){S.forceRead=false;S.claudeSend={key:resultText(),state:"sending",err:""};go(7);sendClaude()}else go(7)};
+  refreshCanSend();
+}
+
+function contextLine(){const parts=[];const cx=CTX[S.group];if(S.ctxChip)parts.push(`${cx&&cx.label?cx.label.replace(/ \(.*\)$/,""):"สถานะ"}: ${S.ctxChip}`);if(S.ctx)parts.push(S.ctx);return parts.join(" · ")}
+function resultText(){
+  const L=["🔮 ผลการจั่วไพ่จากโต๊ะไพ่ทาโรต์"];
+  if(S.q)L.push("คำถาม: "+S.q);
+  const c=contextLine();if(c)L.push("บริบท: "+c);
+  L.push(`สเปรด: ${S.spread} — ${spreadName()}`);
+  L.push("ไพ่กลับหัว: "+(S.rev?"ใช้":"ไม่ใช้"));
+  L.push("พิธี: "+S.hist.join(" → "));
+  L.push("");
+  S.drawn.forEach((d,i)=>L.push(`${i+1}. ${labelFor(i)} — ${DECK[d.id].en} (${DECK[d.id].th}) · ${orientTxt(d)}`));
+  if(S.aside.length)L.push("","ไพ่กระเด็น (ข้อความเสริม): "+S.aside.map(c=>`${DECK[c.id].en} · ${orientTxt(c)}`).join(", "));
+  if(S.bottom)L.push("ไพ่ก้นสำรับ: "+`${DECK[S.bottom.id].en} · ${orientTxt(S.bottom)}`);
+  return L.join("\n");
+}
+function resultData(){
+  const cv=c=>({card:DECK[c.id].en,card_th:DECK[c.id].th,orientation:isRev(c)?"reversed":"upright"});
+  return {question:S.q,context:contextLine(),spread:S.spread,spread_name:spreadName(),reversals:S.rev,ritual:S.hist.slice(),
+    cards:S.drawn.map((d,i)=>({position_no:i+1,position:labelFor(i),...cv(d)})),jumpers:S.aside.map(cv),bottom:S.bottom?cv(S.bottom):null};
+}
+
+/* ---- ask Claude from the page (artifact viewer only) ---- */
+let SAMPLE=null;
+try{if(window.claude&&typeof window.claude.use==="function")Promise.resolve(window.claude.use("sample")).then(s=>{SAMPLE=s||null;if(S.step===6||S.step===7)render()}).catch(()=>{SAMPLE=null})}catch(e){}
+const RET=P.get("ret");
+const canRead=()=>!!SAMPLE&&!S.readOff;
+function readingPrompt(){
+  const n=S.drawn.length,words=n<=3?350:n<=7?550:800;
+  return `คุณคือนักอ่านไพ่ทาโรต์ที่อบอุ่น ตรงไปตรงมา และใส่ใจ อ่านไพ่ชุดนี้เป็นภาษาไทยให้ผู้ถามโดยตรง เรียกผู้ถามว่า "คุณ"
+
+หลักการ
+- ผูกความหมายไพ่ × ตำแหน่ง × คำถามและบริบทของผู้ถามเสมอ ห้ามท่องความหมายลอย ๆ
+- ใช้ความหมายแบบ Rider Waite Smith ไพ่กลับหัวอ่านเป็นพลังที่ติดขัด เกิดภายใน ล่าช้า หรือขาดหรือเกิน เลือกแบบที่เข้ากับบริบทที่สุด
+- ดูภาพรวมของทั้งชุด: ชุดที่เด่นหรือขาด (ไม้เท้า คือการลงมือ ถ้วย คืออารมณ์ ดาบ คือความคิด เหรียญ คืองานและเงิน) จำนวนไพ่ชุดใหญ่ เลขซ้ำ และไพ่ราชสำนักที่อาจหมายถึงคน
+- ไพ่กระเด็นคือข้อความเสริม ไพ่ก้นสำรับคือรากลึกของเรื่อง ถ้ามีให้พูดถึงสั้น ๆ
+- ไพ่บอกแนวโน้ม ไม่ใช่ชะตาตายตัว ทุกคำทำนายต้องจบที่สิ่งที่ผู้ถามทำได้จริง
+- ห้ามทำนายความตาย ห้ามวินิจฉัยโรค ห้ามฟันธงผลคดี ห้ามให้เลขหวยหรือคำแนะนำซื้อขายสินทรัพย์ ถ้าเกี่ยวข้องให้แนะนำผู้เชี่ยวชาญ
+- ถ้าคำถามหรือบริบทสื่อถึงการทำร้ายตัวเองหรือถูกทำร้าย ให้หยุดทำนาย ตอบด้วยความห่วงใย และให้สายด่วนสุขภาพจิต 1323 หรือฉุกเฉิน 1669
+- ถ้าบริบทไม่พอ ให้อ่านตามสมมติฐานที่บอกไว้ชัด ๆ
+
+รูปแบบคำตอบ ใช้ Markdown แบบง่ายเท่านั้น (## หัวข้อ, ย่อหน้า, - รายการ, **ตัวหนา**) ห้ามใช้ตารางและอีโมจิ
+## ทีละใบ
+แต่ละใบขึ้นต้นด้วยบรรทัด **ลำดับ. ตำแหน่ง: ชื่อไพ่** แล้วตามด้วยย่อหน้า 2 ถึง 4 ประโยค
+## ภาพรวม
+## คำตอบ
+ประโยคแรกตอบตรงคำถาม แล้วบอกระดับความมั่นใจ (ชัดเจน / ค่อนข้างชัด / ยังไม่ชัด) และสิ่งที่อาจเปลี่ยนผล
+## คำแนะนำ
+- 2 ถึง 4 ข้อ ทำได้จริง
+ปิดด้วยประโยคให้กำลังใจ 1 ประโยค แล้วเสนอคำถามต่อยอด 1 ข้อ
+ความยาวรวมไม่เกินประมาณ ${words} คำ
+
+ผลการจั่ว
+${resultText()}`;
+}
+function mdLite(src){
+  const inl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+  let out="",list=false,para=[];
+  const flush=()=>{if(para.length){out+=`<p class="body-3">${para.join("<br>")}</p>`;para=[]}};
+  const endList=()=>{if(list){out+="</ul>";list=false}};
+  for(const raw of src.split("\n")){
+    const line=raw.trim();
+    if(/^#{1,3}\s/.test(line)){flush();endList();out+=`<h3 class="heading-6">${inl(line.replace(/^#{1,3}\s/,""))}</h3>`;continue}
+    if(/^[-*•]\s/.test(line)){flush();if(!list){out+="<ul>";list=true}out+=`<li class="body-3">${inl(line.replace(/^[-*•]\s/,""))}</li>`;continue}
+    if(!line){flush();endList();continue}
+    endList();para.push(inl(line));
+  }
+  flush();endList();return out;
+}
+const READ_ERR={not_granted:"คุณยังไม่ได้อนุญาตให้หน้านี้ถาม Claude คัดลอกผลไปวางในแชทแทนได้เลย",sampling_disabled:"บัญชีนี้ใช้ Claude จากหน้าเว็บไม่ได้ คัดลอกผลไปวางในแชทแทนได้เลย",rate_limited:"ตอนนี้ถามบ่อยเกินไป รอสักครู่แล้วกดอ่านอีกครั้ง",session_expired:"ต้องเข้าสู่ระบบใหม่ก่อน แล้วกดอ่านอีกครั้ง",refused:"Claude ไม่สามารถอ่านคำถามนี้ได้ ลองปรับคำถามแล้วเริ่มใหม่",upstream_error:"การเชื่อมต่อขัดข้อง กดอ่านอีกครั้งได้"};
+const HIDE_CODES=["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"];
+async function startReading(){
+  const key=resultText();
+  if(S.reading&&S.reading.key===key&&(S.reading.state==="done"||S.reading.state==="running"))return;
+  const ctl=new AbortController();
+  S.reading={key,state:"running",text:"",ctl,err:""};
+  paintReading();
+  try{
+    const {truncated}=await SAMPLE(readingPrompt(),{signal:ctl.signal,onText:({text})=>{if(!S.reading||S.reading.ctl!==ctl)return;S.reading.text=text;paintReading()}});
+    if(!S.reading||S.reading.ctl!==ctl)return;
+    S.reading.state="done";S.reading.truncated=truncated;
+  }catch(e){
+    if(!S.reading||S.reading.ctl!==ctl)return;
+    S.reading.text=e&&e.code==="refused"?"":(e&&e.text)||S.reading.text;
+    S.reading.state=e&&e.code==="cancelled"?"stopped":"error";
+    S.reading.err=e&&e.code==="cancelled"?"":(READ_ERR[e&&e.code]||READ_ERR.upstream_error);
+    if(e&&HIDE_CODES.includes(e.code))S.readOff=true;
+  }
+  if(S.step===7)r5();
+}
+function paintReading(){
+  const box=$("#reading");if(!box||!S.reading)return;
+  const R=S.reading;
+  box.innerHTML=R.text?mdLite(R.text):`<div class="thinking"><span class="flip" aria-hidden="true"><span class="cb"></span></span><span class="body-3">กำลังอ่านไพ่ของคุณ อาจใช้เวลาสักครู่</span></div>`;
+  const st=$("#stopRead");if(st)st.hidden=R.state!=="running";
+}
+
+/* ---- send back to a local agent (table_server.py) ---- */
+async function sendToAgent(){
+  const key=resultText();
+  if(S.sent&&S.sent.key===key&&S.sent.state!=="error")return;
+  S.sent={key,state:"sending"};paintSend();
+  try{
+    const r=await fetch("/result?t="+encodeURIComponent(RET),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:key,data:resultData()})});
+    S.sent.state=r.ok?"sent":(r.status===410?"closed":"error");
+  }catch(e){S.sent.state=S.everSent?"closed":"error"}
+  if(S.sent.state==="sent")S.everSent=true;
+  paintSend();
+}
+function paintSend(){
+  const box=$("#sendBox");if(!box||!S.sent)return;
+  const m={sending:["paper-plane-tilt","กำลังส่งผลกลับไปที่แชท"],sent:["check-circle","ส่งผลกลับไปที่แชทแล้ว กลับไปดูคำทำนายในแชทได้เลย"],closed:["info","แชทรับผลชุดก่อนไปแล้ว ไพ่ที่จั่วเพิ่มให้คัดลอกไปวางในแชทเอง"],error:["warning","ส่งกลับไม่สำเร็จ คัดลอกผลด้านล่างไปวางในแชทแทน"]}[S.sent.state];
+  box.className="send-box body-3 "+S.sent.state;
+  box.innerHTML=`<i class="ph-bold ph-${m[0]}"></i><span>${m[1]}</span>${S.sent.state==="error"?`<button class="btn button-sm" id="resend">ลองส่งอีกครั้ง</button>`:""}`;
+  const rs=$("#resend");if(rs)rs.onclick=sendToAgent;
+}
+
+/* ---- send the draw to the watching Claude session (artifact comments) ---- */
+let COMMENTS=null,CAN_SEND="off";
+function refreshCanSend(){
+  if(!COMMENTS||typeof COMMENTS.canSendToClaude!=="function")return;
+  COMMENTS.canSendToClaude().then(v=>{const old=CAN_SEND;CAN_SEND=v;if(old!==v&&S.step===6)r4()}).catch(()=>{CAN_SEND="off"});
+}
+try{if(window.claude&&typeof window.claude.use==="function")Promise.resolve(window.claude.use("comments")).then(c=>{COMMENTS=c||null;refreshCanSend()}).catch(()=>{COMMENTS=null})}catch(e){}
+const canSendClaude=()=>!RET&&!!COMMENTS&&CAN_SEND==="available"&&!S.claudeOff;
+let DB=null;
+try{if(window.claude&&typeof window.claude.use==="function")Promise.resolve(window.claude.use("db")).then(d=>{DB=d||null}).catch(()=>{DB=null})}catch(e){}
+const newReadingId=()=>"r"+Date.now().toString(36)+rint(1679616).toString(36);
+let readUnsub=null,readSlowTimer=null;
+function stopWatchReading(){if(readUnsub){try{readUnsub()}catch(e){}readUnsub=null}clearTimeout(readSlowTimer)}
+function watchReading(){
+  const C=S.claudeSend;if(!DB||!C||!C.id)return;
+  stopWatchReading();
+  C.live={state:"waiting",text:"",slow:false};
+  readSlowTimer=setTimeout(()=>{if(S.claudeSend===C&&C.live.state!=="done"){C.live.slow=true;paintClaude()}},180000);
+  try{
+    readUnsub=DB.doc("readings/"+C.id).onSnapshot(snap=>{
+      if(S.claudeSend!==C||!snap.exists)return;
+      const d=snap.data()||{};
+      if(typeof d.text==="string"&&d.text.trim()){C.live.state="done";C.live.text=d.text;clearTimeout(readSlowTimer)}
+      else if(d.status==="reading")C.live.state="reading";
+      paintClaude();
+    },()=>{if(S.claudeSend===C){C.live.state="lost";paintClaude()}});
+  }catch(e){C.live.state="lost"}
+}
+function claudeText(){
+  const lead="อ่านไพ่ชุดนี้ให้หน่อย (ใช้ skill tarot-reading แปลผลอัตโนมัติ)\n"+(S.claudeSend&&S.claudeSend.id&&DB?"รหัสคำทำนาย: readings/"+S.claudeSend.id+"\n":"")+"\n";
+  const enc=s=>new TextEncoder().encode(s).length;
+  let t=lead+resultText();
+  if(enc(t)>3900)t=t.replace(/^พิธี: .*$/m,"พิธี: (ย่อ) "+S.hist[0]+" → … → "+S.hist[S.hist.length-1]);
+  while(enc(t)>3900)t=t.slice(0,-40);
+  return t;
+}
+const CLAUDE_ERR={consent_required:"ยังไม่ได้อนุญาตให้หน้านี้คอมเมนต์แทนคุณ กดส่งอีกครั้งแล้วเลือกอนุญาต",forbidden:"หน้านี้คอมเมนต์แทนคุณไม่ได้ อ่านคำทำนายในหน้านี้แทนได้",claude_unavailable:"ตอนนี้ไม่มี Claude Code ที่เปิดรออยู่ อ่านคำทำนายในหน้านี้แทนได้",rate_limited:"ส่งถี่เกินไป รอสักครู่แล้วกดส่งอีกครั้ง",unavailable:"ระบบคอมเมนต์ขัดข้องชั่วคราว กดส่งอีกครั้งได้",upstream_error:"ส่งไม่สำเร็จ กดส่งอีกครั้งได้"};
+const CLAUDE_OFF=["forbidden","claude_unavailable","not_granted","capability_disabled","capability_removed"];
+async function sendClaude(){
+  const key=resultText();
+  stopWatchReading();
+  S.claudeSend={key,id:newReadingId(),state:"sending",err:""};paintClaude();
+  try{
+    const anchor=await COMMENTS.anchorFor($("#panel"));
+    await COMMENTS.sendToClaude({anchor,text:claudeText()});
+    S.claudeSend.state="sent";
+    watchReading();
+  }catch(e){
+    const code=e&&e.code||"upstream_error";
+    S.claudeSend.state="error";S.claudeSend.err=CLAUDE_ERR[code]||CLAUDE_ERR.upstream_error;
+    if(CLAUDE_OFF.includes(code))S.claudeOff=true;
+  }
+  if(S.step===7)r5();
+}
+function paintClaude(){
+  const box=$("#claudeBox");if(!box||!S.claudeSend)return;
+  const R=S.claudeSend,L=R.live;
+  let m;
+  if(R.state==="sending")m=["paper-plane-tilt","กำลังส่งไพ่ให้ Claude"];
+  else if(R.state==="error")m=["warning",R.err];
+  else if(!L)m=["check-circle","ส่งให้ Claude แล้ว คำทำนายจะตอบในเธรดคอมเมนต์ของหน้านี้ (กดไอคอนคอมเมนต์ที่มุมหน้าเพื่อเปิดดู)"];
+  else if(L.state==="done")m=["check-circle","Claude อ่านไพ่ให้แล้ว"];
+  else if(L.state==="reading")m=["sparkle","Claude ได้รับไพ่แล้ว กำลังอ่านให้อยู่"];
+  else if(L.state==="lost")m=["info","เชื่อมต่อเพื่อรับคำทำนายในหน้านี้ไม่ได้ คำทำนายจะอยู่ในเธรดคอมเมนต์ของหน้า"];
+  else m=["paper-plane-tilt","ส่งให้ Claude แล้ว กำลังรอคำทำนาย"];
+  box.className="send-box body-3 "+(R.state==="error"?"error":L&&L.state==="done"?"sent":R.state==="sent"&&!L?"sent":"");
+  box.innerHTML=`<i class="ph-bold ph-${m[0]}"></i><span>${esc(m[1])}</span>`;
+  const out=$("#claudeReading");if(!out)return;
+  if(L&&L.state==="done"){out.hidden=false;out.innerHTML=mdLite(L.text)}
+  else if(L&&(L.state==="waiting"||L.state==="reading")){out.hidden=false;out.innerHTML=`<div class="thinking"><span class="flip" aria-hidden="true"><span class="cb"></span></span><span class="body-3">${L.state==="reading"?"Claude กำลังอ่านไพ่ของคุณ":"รอ Claude รับไพ่"} คำทำนายจะขึ้นตรงนี้เอง${L.slow?" ถ้านานเกินไป ลองเปิดดูในคอมเมนต์ของหน้า":""}</span></div>`}
+  else{out.hidden=true;out.innerHTML=""}
+}
+
+function r5(){
+  const key=resultText();
+  const mode=RET?"agent":(S.claudeSend&&S.claudeSend.key===key&&!S.forceRead)?"claude":canRead()?"read":"copy";
+  const title=mode==="read"?"คำทำนายของคุณ":mode==="claude"?"ส่งให้ Claude อ่านไพ่":"ส่งผลกลับในแชท";
+  const chips=`<div class="card-row">${S.drawn.map((d,i)=>`<span class="card-chip caption-3"><b>${i+1}</b>${esc(DECK[d.id].en)}${isRev(d)?` <i class="ph-bold ph-arrow-u-down-left" title="กลับหัว"></i>`:""}</span>`).join("")}</div>`;
+  const raw=`<label class="f title-3" for="out">ผลการจั่วไพ่</label><textarea class="result" id="out" readonly>${esc(resultText())}</textarea>
+    <div class="row" style="margin-top:16px"><button class="btn ${mode==="read"?"":"primary "}button-md" id="copy"><i class="ph-bold ph-copy"></i>คัดลอกผลการจั่ว</button><span class="toast body-6" id="cmsg" role="status"><i class="ph-bold ph-check-circle"></i>คัดลอกแล้ว</span></div>`;
+  let body="";
+  if(mode==="read"){
+    const R=S.reading,done=R&&R.state==="done",bad=R&&(R.state==="error"||R.state==="stopped");
+    body=`${chips}
+    <article class="reading" id="reading" aria-live="polite"></article>
+    ${R&&R.truncated?`<p class="body-6 muted">คำทำนายยาวเกินจึงถูกตัดท้าย ถามต่อในแชทได้</p>`:""}
+    ${R&&R.err?`<p class="warn body-6">${esc(R.err)}</p>`:""}
+    <div class="row" style="margin-top:16px"><button class="btn button-sm" id="stopRead" hidden><i class="ph-bold ph-stop"></i>หยุด</button>
+    ${bad&&!S.readOff?`<button class="btn primary button-sm" id="again2"><i class="ph-bold ph-arrows-clockwise"></i>อ่านอีกครั้ง</button>`:""}
+    ${done?`<button class="btn button-sm" id="copyRead"><i class="ph-bold ph-copy"></i>คัดลอกคำทำนาย</button><span class="toast body-6" id="rmsg" role="status"><i class="ph-bold ph-check-circle"></i>คัดลอกแล้ว</span>`:""}</div>
+    <details class="raw"><summary class="title-4">ผลการจั่วแบบข้อความ สำหรับถามต่อในแชท</summary>${raw}</details>`;
+  }else if(mode==="claude"){
+    const C=S.claudeSend;
+    body=`${bubble(DB?"ผลการจั่วถูกส่งถึง Claude Code ที่เปิดอยู่ คำทำนายจะขึ้นในหน้านี้เองเมื่ออ่านเสร็จ และมีในเธรดคอมเมนต์ของหน้าด้วย":"ผลการจั่วถูกส่งเป็นคอมเมนต์ถึง Claude Code ที่เปิดอยู่ คำทำนายจะตอบกลับในเธรดคอมเมนต์ของหน้านี้ (กดไอคอนคอมเมนต์ของหน้าเพื่อดู)","paper-plane-tilt")}
+    <div id="claudeBox" class="send-box body-3"></div>${chips}
+    <article class="reading" id="claudeReading" aria-live="polite" hidden></article>
+    <div class="row" style="margin-top:8px">${C.state==="error"&&!S.claudeOff?`<button class="btn primary button-sm" id="resendC"><i class="ph-bold ph-paper-plane-tilt"></i>ส่งอีกครั้ง</button>`:""}${SAMPLE&&!S.readOff?`<button class="btn button-sm" id="readHere"><i class="ph-bold ph-sparkle"></i>อ่านคำทำนายในหน้านี้แทน</button>`:""}</div>
+    <details class="raw"><summary class="title-4">ผลการจั่วแบบข้อความ</summary>${raw}</details>`;
+  }else if(mode==="agent"){
+    body=`${bubble("ผลการจั่วจะถูกส่งกลับไปที่แชทให้อัตโนมัติ แล้ว agent จะอ่านไพ่ให้ต่อทันที","paper-plane-tilt")}
+    <div id="sendBox" class="send-box body-3"></div>${chips}
+    <details class="raw"><summary class="title-4">ผลการจั่วแบบข้อความ (เผื่อส่งไม่สำเร็จ)</summary>${raw}</details>`;
+  }else{
+    body=`${bubble("คัดลอกข้อความนี้ แล้ววางกลับในแชท จะได้อ่านไพ่ให้ตามตำแหน่งที่คุณจั่ว","clipboard-text")}${raw}`;
+  }
+  $("#panel").innerHTML=`${head(8,title)}${body}
+  <div class="actions"><button class="btn button-md" id="back"><i class="ph-bold ph-arrow-left"></i> ดูไพ่อีกครั้ง</button><button class="btn button-md" id="again"><i class="ph-bold ph-arrow-clockwise"></i> เริ่มคำถามใหม่</button></div>`;
+  const copyTo=async(text,msg)=>{try{await navigator.clipboard.writeText(text)}catch(e){const t=$("#out");if(t){t.value=text;t.select();document.execCommand("copy");t.value=resultText()}}const m=$(msg);m&&m.classList.add("show")};
+  if($("#copy"))$("#copy").onclick=()=>copyTo(resultText(),"#cmsg");
+  if(mode==="read"){
+    paintReading();
+    if($("#stopRead"))$("#stopRead").onclick=()=>S.reading&&S.reading.ctl.abort();
+    if($("#again2"))$("#again2").onclick=()=>{S.reading=null;startReading()};
+    if($("#copyRead"))$("#copyRead").onclick=()=>copyTo(S.reading.text,"#rmsg");
+    if(!S.reading||S.reading.key!==resultText())startReading();
+  }
+  if(mode==="agent"){paintSend();sendToAgent()}
+  if(mode==="claude"){paintClaude();const rs=$("#resendC");if(rs)rs.onclick=sendClaude;const rh=$("#readHere");if(rh)rh.onclick=()=>{S.forceRead=true;r5()}}
+  $("#back").onclick=()=>go(6);
+  $("#again").onclick=()=>{if(S.reading&&S.reading.state==="running")S.reading.ctl.abort();Object.assign(S,{q:"",ctx:"",ctxChip:"",deck:[],hist:[],counts:{},aside:[],pendingJump:null,cut:null,picks:[],drawn:[],need:0,bottom:null,cutsDone:0,fromTop:false,reading:null,claudeSend:null,forceRead:false});stopWatchReading();go(0)};
+}
+
+const ICONS={"bold:stop":"<path d=\"M200,36H56A20,20,0,0,0,36,56V200a20,20,0,0,0,20,20H200a20,20,0,0,0,20-20V56A20,20,0,0,0,200,36Zm-4,160H60V60H196Z\"/>","bold:warning":"<path d=\"M240.26,186.1,152.81,34.23h0a28.74,28.74,0,0,0-49.62,0L15.74,186.1a27.45,27.45,0,0,0,0,27.71A28.31,28.31,0,0,0,40.55,228h174.9a28.31,28.31,0,0,0,24.79-14.19A27.45,27.45,0,0,0,240.26,186.1Zm-20.8,15.7a4.46,4.46,0,0,1-4,2.2H40.55a4.46,4.46,0,0,1-4-2.2,3.56,3.56,0,0,1,0-3.73L124,46.2a4.77,4.77,0,0,1,8,0l87.44,151.87A3.56,3.56,0,0,1,219.46,201.8ZM116,136V104a12,12,0,0,1,24,0v32a12,12,0,0,1-24,0Zm28,40a16,16,0,1,1-16-16A16,16,0,0,1,144,176Z\"/>","bold:info":"<path d=\"M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z\"/>","bold:paper-plane-tilt":"<path d=\"M230.14,25.86a20,20,0,0,0-19.57-5.11l-.22.07L18.44,79a20,20,0,0,0-3.06,37.25L99,157l40.71,83.65a19.81,19.81,0,0,0,18,11.38c.57,0,1.15,0,1.73-.07A19.82,19.82,0,0,0,177,237.56L235.18,45.65a1.42,1.42,0,0,0,.07-.22A20,20,0,0,0,230.14,25.86ZM156.91,221.07l-34.37-70.64,46-45.95a12,12,0,0,0-17-17l-46,46L34.93,99.09,210,46Z\"/>","bold:arrows-clockwise":"<path d=\"M228,48V96a12,12,0,0,1-12,12H168a12,12,0,0,1,0-24h19l-7.8-7.8a75.55,75.55,0,0,0-53.32-22.26h-.43A75.49,75.49,0,0,0,72.39,75.57,12,12,0,1,1,55.61,58.41a99.38,99.38,0,0,1,69.87-28.47H126A99.42,99.42,0,0,1,196.2,59.23L204,67V48a12,12,0,0,1,24,0ZM183.61,180.43a75.49,75.49,0,0,1-53.09,21.63h-.43A75.55,75.55,0,0,1,76.77,179.8L69,172H88a12,12,0,0,0,0-24H40a12,12,0,0,0-12,12v48a12,12,0,0,0,24,0V189l7.8,7.8A99.42,99.42,0,0,0,130,226.06h.56a99.38,99.38,0,0,0,69.87-28.47,12,12,0,0,0-16.78-17.16Z\"/>","bold:minus":"<path d=\"M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128Z\"/>","bold:lightning":"<path d=\"M219.71,117.38a12,12,0,0,0-7.25-8.52L161.28,88.39l10.59-70.61a12,12,0,0,0-20.64-10l-112,120a12,12,0,0,0,4.31,19.33l51.18,20.47L84.13,238.22a12,12,0,0,0,20.64,10l112-120A12,12,0,0,0,219.71,117.38ZM113.6,203.55l6.27-41.77a12,12,0,0,0-7.41-12.92L68.74,131.37,142.4,52.45l-6.27,41.77a12,12,0,0,0,7.41,12.92l43.72,17.49Z\"/>","bold:heart":"<path d=\"M178,36c-20.09,0-37.92,7.93-50,21.56C115.92,43.93,98.09,36,78,36a66.08,66.08,0,0,0-66,66c0,72.34,105.81,130.14,110.31,132.57a12,12,0,0,0,11.38,0C138.19,232.14,244,174.34,244,102A66.08,66.08,0,0,0,178,36Zm-5.49,142.36A328.69,328.69,0,0,1,128,210.16a328.69,328.69,0,0,1-44.51-31.8C61.82,159.77,36,131.42,36,102A42,42,0,0,1,78,60c17.8,0,32.7,9.4,38.89,24.54a12,12,0,0,0,22.22,0C145.3,69.4,160.2,60,178,60a42,42,0,0,1,42,42C220,131.42,194.18,159.77,172.51,178.36Z\"/>","bold:signpost":"<path d=\"M248.92,104,215.3,66.62A20,20,0,0,0,200.44,60H140V32a12,12,0,0,0-24,0V60H40A20,20,0,0,0,20,80v64a20,20,0,0,0,20,20h76v60a12,12,0,0,0,24,0V164h60.44a20,20,0,0,0,14.86-6.62L248.92,120A12,12,0,0,0,248.92,104Zm-50.26,36H44V84H198.66l25.2,28Z\"/>","bold:briefcase":"<path d=\"M100,100a12,12,0,0,1,12-12h32a12,12,0,0,1,0,24H112A12,12,0,0,1,100,100ZM236,68V196a20,20,0,0,1-20,20H40a20,20,0,0,1-20-20V68A20,20,0,0,1,40,48H76V40a28,28,0,0,1,28-28h48a28,28,0,0,1,28,28v8h36A20,20,0,0,1,236,68ZM100,48h56V40a4,4,0,0,0-4-4H104a4,4,0,0,0-4,4ZM44,72v35.23A180.06,180.06,0,0,0,128,128a180,180,0,0,0,84-20.78V72ZM212,192V133.94A204.27,204.27,0,0,1,128,152a204.21,204.21,0,0,1-84-18.06V192Z\"/>","bold:calendar":"<path d=\"M208,28H188V24a12,12,0,0,0-24,0v4H92V24a12,12,0,0,0-24,0v4H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28ZM68,52a12,12,0,0,0,24,0h72a12,12,0,0,0,24,0h16V76H52V52ZM52,204V100H204V204Zm60-80v56a12,12,0,0,1-24,0V143.32a12,12,0,0,1-9.37-22l16-8A12,12,0,0,1,112,124Zm61.49,33.88L163.9,168H168a12,12,0,0,1,0,24H136a12,12,0,0,1-8.71-20.25L155.45,142a4,4,0,0,0,.55-2,4,4,0,0,0-7.47-2,12,12,0,0,1-20.78-12A28,28,0,0,1,180,140a27.77,27.77,0,0,1-5.64,16.86A10.63,10.63,0,0,1,173.49,157.88Z\"/>","bold:moon-stars":"<path d=\"M244,96a12,12,0,0,1-12,12H220v12a12,12,0,0,1-24,0V108H184a12,12,0,0,1,0-24h12V72a12,12,0,0,1,24,0V84h12A12,12,0,0,1,244,96ZM144,60h4v4a12,12,0,0,0,24,0V60h4a12,12,0,0,0,0-24h-4V32a12,12,0,0,0-24,0v4h-4a12,12,0,0,0,0,24Zm75.81,90.38A12,12,0,0,1,222,162.3,100,100,0,1,1,93.7,34a12,12,0,0,1,15.89,13.6A85.12,85.12,0,0,0,108,64a84.09,84.09,0,0,0,84,84,85.22,85.22,0,0,0,16.37-1.59A12,12,0,0,1,219.81,150.38ZM190,172A108.13,108.13,0,0,1,84,66,76,76,0,1,0,190,172Z\"/>","bold:sliders-horizontal":"<path d=\"M40,92H70.06a36,36,0,0,0,67.88,0H216a12,12,0,0,0,0-24H137.94a36,36,0,0,0-67.88,0H40a12,12,0,0,0,0,24Zm64-24A12,12,0,1,1,92,80,12,12,0,0,1,104,68Zm112,96H201.94a36,36,0,0,0-67.88,0H40a12,12,0,0,0,0,24h94.06a36,36,0,0,0,67.88,0H216a12,12,0,0,0,0-24Zm-48,24a12,12,0,1,1,12-12A12,12,0,0,1,168,188Z\"/>","bold:check":"<path d=\"M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z\"/>","bold:scissors":"<path d=\"M238.78,183.79,98.28,87.65A40.18,40.18,0,0,0,100,76a40,40,0,1,0-15.29,31.45l30,20.56-30,20.56a40,40,0,1,0,3.57,59.74h0A39.73,39.73,0,0,0,100,180a40.18,40.18,0,0,0-1.72-11.66L136,142.54l89.22,61.06a12,12,0,0,0,13.56-19.81ZM71.31,191.33h0A16,16,0,1,1,76,180,16,16,0,0,1,71.31,191.33ZM48.69,87.3a16,16,0,1,1,22.62,0h0A16,16,0,0,1,48.69,87.3Zm112.82,23.24a12,12,0,0,1,3.13-16.68L225.22,52.4a12,12,0,0,1,13.56,19.81l-60.59,41.46a12,12,0,0,1-16.68-3.13Z\"/>","bold:arrow-clockwise":"<path d=\"M244,56v48a12,12,0,0,1-12,12H184a12,12,0,1,1,0-24H201.1l-19-17.38c-.13-.12-.26-.24-.38-.37A76,76,0,1,0,127,204h1a75.53,75.53,0,0,0,52.15-20.72,12,12,0,0,1,16.49,17.45A99.45,99.45,0,0,1,128,228h-1.37A100,100,0,1,1,198.51,57.06L220,76.72V56a12,12,0,0,1,24,0Z\"/>","bold:arrow-counter-clockwise":"<path d=\"M228,128a100,100,0,0,1-98.66,100H128a99.39,99.39,0,0,1-68.62-27.29,12,12,0,0,1,16.48-17.45,76,76,0,1,0-1.57-109c-.13.13-.25.25-.39.37L54.89,92H72a12,12,0,0,1,0,24H24a12,12,0,0,1-12-12V56a12,12,0,0,1,24,0V76.72L57.48,57.06A100,100,0,0,1,228,128Z\"/>","bold:arrow-left":"<path d=\"M228,128a12,12,0,0,1-12,12H69l51.52,51.51a12,12,0,0,1-17,17l-72-72a12,12,0,0,1,0-17l72-72a12,12,0,0,1,17,17L69,116H216A12,12,0,0,1,228,128Z\"/>","bold:arrow-line-down":"<path d=\"M47.51,112.49a12,12,0,0,1,17-17L116,147V32a12,12,0,0,1,24,0V147l51.51-51.52a12,12,0,0,1,17,17l-72,72a12,12,0,0,1-17,0ZM216,204H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z\"/>","bold:arrow-line-up":"<path d=\"M208.49,143.51a12,12,0,0,1-17,17L140,109V224a12,12,0,0,1-24,0V109L64.49,160.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0ZM216,28H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z\"/>","bold:arrow-right":"<path d=\"M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z\"/>","bold:arrow-u-down-left":"<path d=\"M236,112a68.07,68.07,0,0,1-68,68H61l27.52,27.51a12,12,0,0,1-17,17l-48-48a12,12,0,0,1,0-17l48-48a12,12,0,1,1,17,17L61,156H168a44,44,0,0,0,0-88H80a12,12,0,0,1,0-24h88A68.07,68.07,0,0,1,236,112Z\"/>","bold:arrow-u-up-left":"<path d=\"M236,144a68.07,68.07,0,0,1-68,68H80a12,12,0,0,1,0-24h88a44,44,0,0,0,0-88H61l27.52,27.51a12,12,0,0,1-17,17l-48-48a12,12,0,0,1,0-17l48-48a12,12,0,1,1,17,17L61,76H168A68.08,68.08,0,0,1,236,144Z\"/>","bold:arrow-up":"<path d=\"M208.49,120.49a12,12,0,0,1-17,0L140,69V216a12,12,0,0,1-24,0V69L64.49,120.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0l72,72A12,12,0,0,1,208.49,120.49Z\"/>","fill:arrows-clockwise":"<path d=\"M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1-5.66-13.66L180.65,72a79.48,79.48,0,0,0-54.72-22.09h-.45A79.52,79.52,0,0,0,69.59,72.71,8,8,0,0,1,58.41,61.27,96,96,0,0,1,192,60.7l18.36-18.36A8,8,0,0,1,224,48ZM186.41,183.29A80,80,0,0,1,75.35,184l18.31-18.31A8,8,0,0,0,88,152H40a8,8,0,0,0-8,8v48a8,8,0,0,0,13.66,5.66L64,195.3a95.42,95.42,0,0,0,66,26.76h.53a95.36,95.36,0,0,0,67.07-27.33,8,8,0,0,0-11.18-11.44Z\"/>","bold:bookmark-simple":"<path d=\"M184,28H72A20,20,0,0,0,52,48V224a12,12,0,0,0,18.36,10.18l57.63-36,57.65,36A12,12,0,0,0,204,224V48A20,20,0,0,0,184,28Zm-4,174.35-45.65-28.53a12,12,0,0,0-12.72,0L76,202.35V52H180Z\"/>","bold:cards":"<path d=\"M180,72H36A20,20,0,0,0,16,92V204a20,20,0,0,0,20,20H180a20,20,0,0,0,20-20V92A20,20,0,0,0,180,72Zm-4,128H40V96H176ZM240,52V176a12,12,0,0,1-24,0V56H64a12,12,0,0,1,0-24H220A20,20,0,0,1,240,52Z\"/>","bold:chat-circle-dots":"<path d=\"M120,128a16,16,0,1,1-16-16A16,16,0,0,1,120,128Zm32-16a16,16,0,1,0,16,16A16,16,0,0,0,152,112Zm84,16A108,108,0,0,1,78.77,224.15L46.34,235A20,20,0,0,1,21,209.66l10.81-32.43A108,108,0,1,1,236,128Zm-24,0A84,84,0,1,0,55.27,170.06a12,12,0,0,1,1,9.81l-9.93,29.79,29.79-9.93a12.1,12.1,0,0,1,3.8-.62,12,12,0,0,1,6,1.62A84,84,0,0,0,212,128Z\"/>","bold:check-circle":"<path d=\"M176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Z\"/>","bold:clipboard-text":"<path d=\"M172,164a12,12,0,0,1-12,12H96a12,12,0,0,1,0-24h64A12,12,0,0,1,172,164Zm-12-52H96a12,12,0,0,0,0,24h64a12,12,0,0,0,0-24Zm60-64V216a20,20,0,0,1-20,20H56a20,20,0,0,1-20-20V48A20,20,0,0,1,56,28H90.53a51.88,51.88,0,0,1,74.94,0H200A20,20,0,0,1,220,48ZM100.29,60h55.42a28,28,0,0,0-55.42,0ZM196,52H178.59A52.13,52.13,0,0,1,180,64v8a12,12,0,0,1-12,12H88A12,12,0,0,1,76,72V64a52.13,52.13,0,0,1,1.41-12H60V212H196Z\"/>","bold:clock-counter-clockwise":"<path d=\"M140,80v41.21l34.17,20.5a12,12,0,1,1-12.34,20.58l-40-24A12,12,0,0,1,116,128V80a12,12,0,0,1,24,0ZM128,28A99.38,99.38,0,0,0,57.24,57.34c-4.69,4.74-9,9.37-13.24,14V64a12,12,0,0,0-24,0v40a12,12,0,0,0,12,12H72a12,12,0,0,0,0-24H57.77C63,86,68.37,80.22,74.26,74.26a76,76,0,1,1,1.58,109,12,12,0,0,0-16.48,17.46A100,100,0,1,0,128,28Z\"/>","fill:coin":"<path d=\"M207.58,63.84C186.85,53.48,159.33,48,128,48S69.15,53.48,48.42,63.84,16,88.78,16,104v48c0,15.22,11.82,29.85,32.42,40.16S96.67,208,128,208s58.85-5.48,79.58-15.84S240,167.22,240,152V104C240,88.78,228.18,74.15,207.58,63.84Zm-87.58,96v32c-19-.62-35-3.42-48-7.49V153.05A203.43,203.43,0,0,0,120,159.86Zm16,0a203.43,203.43,0,0,0,48-6.81v31.31c-13,4.07-29,6.87-48,7.49ZM32,152V133.53a82.88,82.88,0,0,0,16.42,10.63c2.43,1.21,5,2.35,7.58,3.43V178C40.17,170.16,32,160.29,32,152Zm168,26V147.59c2.61-1.08,5.15-2.22,7.58-3.43A82.88,82.88,0,0,0,224,133.53V152C224,160.29,215.83,170.16,200,178Z\"/>","bold:copy":"<path d=\"M216,28H88A12,12,0,0,0,76,40V76H40A12,12,0,0,0,28,88V216a12,12,0,0,0,12,12H168a12,12,0,0,0,12-12V180h36a12,12,0,0,0,12-12V40A12,12,0,0,0,216,28ZM156,204H52V100H156Zm48-48H180V88a12,12,0,0,0-12-12H100V52H204Z\"/>","fill:crown":"<path d=\"M248,80a28,28,0,1,0-51.12,15.77l-26.79,33L146,73.4a28,28,0,1,0-36.06,0L85.91,128.74l-26.79-33a28,28,0,1,0-26.6,12L47,194.63A16,16,0,0,0,62.78,208H193.22A16,16,0,0,0,209,194.63l14.47-86.85A28,28,0,0,0,248,80ZM128,40a12,12,0,1,1-12,12A12,12,0,0,1,128,40ZM24,80A12,12,0,1,1,36,92,12,12,0,0,1,24,80ZM220,92a12,12,0,1,1,12-12A12,12,0,0,1,220,92Z\"/>","fill:drop-half":"<path d=\"M174,47.75a254.19,254.19,0,0,0-41.45-38.3,8,8,0,0,0-9.18,0A254.19,254.19,0,0,0,82,47.75C54.51,79.32,40,112.6,40,144a88,88,0,0,0,176,0C216,112.6,201.49,79.32,174,47.75ZM56,144c0-57.23,55.47-105,72-118V216A72.08,72.08,0,0,1,56,144Z\"/>","bold:eraser":"<path d=\"M216,204H141l86.84-86.84a28,28,0,0,0,0-39.6L186.43,36.19a28,28,0,0,0-39.6,0L28.19,154.82a28,28,0,0,0,0,39.6l30.06,30.07A12,12,0,0,0,66.74,228H216a12,12,0,0,0,0-24ZM163.8,53.16a4,4,0,0,1,5.66,0l41.38,41.38a4,4,0,0,1,0,5.65L160,151l-47-47ZM71.71,204,45.16,177.45a4,4,0,0,1,0-5.65L96,121l47,47-36,36Z\"/>","fill:flower-lotus":"<path d=\"M245.83,121.63a15.53,15.53,0,0,0-9.52-7.33,73.55,73.55,0,0,0-22.17-2.22c4-19.85,1-35.55-2-44.86a16.17,16.17,0,0,0-18.8-10.88,85.53,85.53,0,0,0-28.55,12.12,94.58,94.58,0,0,0-27.11-33.25,16.05,16.05,0,0,0-19.26,0A94.58,94.58,0,0,0,91.26,68.46,85.53,85.53,0,0,0,62.71,56.34,16.14,16.14,0,0,0,43.92,67.22c-3,9.31-6,25-2.06,44.86a73.55,73.55,0,0,0-22.17,2.22,15.53,15.53,0,0,0-9.52,7.33,16,16,0,0,0-1.6,12.26c3.39,12.58,13.8,36.49,45.33,55.33S113.13,208,128.05,208s42.67,0,74-18.78c31.53-18.84,41.94-42.75,45.33-55.33A16,16,0,0,0,245.83,121.63ZM62.1,175.49C35.47,159.57,26.82,140.05,24,129.7a59.61,59.61,0,0,1,22.5-1.17,129.08,129.08,0,0,0,9.15,19.41,142.28,142.28,0,0,0,34,39.56A114.92,114.92,0,0,1,62.1,175.49ZM128,190.4c-9.33-6.94-32-28.23-32-71.23C96,76.7,118.38,55.24,128,48c9.62,7.26,32,28.72,32,71.19C160,162.17,137.33,183.46,128,190.4Zm104-60.68c-2.77,10.24-11.4,29.81-38.09,45.77a114.92,114.92,0,0,1-27.55,12,142.28,142.28,0,0,0,34-39.56,129.08,129.08,0,0,0,9.15-19.41A59.69,59.69,0,0,1,232,129.71Z\"/>","fill:globe-hemisphere-west":"<path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm88,104a87.62,87.62,0,0,1-6.4,32.94l-44.7-27.49a15.92,15.92,0,0,0-6.24-2.23l-22.82-3.08a16.11,16.11,0,0,0-16,7.86h-8.72l-3.8-7.86a15.91,15.91,0,0,0-11-8.67l-8-1.73L96.14,104h16.71a16.06,16.06,0,0,0,7.73-2l12.25-6.76a16.62,16.62,0,0,0,3-2.14l26.91-24.34A15.93,15.93,0,0,0,166,49.1l-.36-.65A88.11,88.11,0,0,1,216,128ZM40,128a87.53,87.53,0,0,1,8.54-37.8l11.34,30.27a16,16,0,0,0,11.62,10l21.43,4.61L96.74,143a16.09,16.09,0,0,0,14.4,9h1.48l-7.23,16.23a16,16,0,0,0,2.86,17.37l.14.14L128,205.94l-1.94,10A88.11,88.11,0,0,1,40,128Z\"/>","bold:hand-grabbing":"<path d=\"M188,76a31.85,31.85,0,0,0-11.21,2,32,32,0,0,0-48.79-11A32,32,0,0,0,76,92v16H68a32,32,0,0,0-32,32v12a92,92,0,0,0,184,0V108A32,32,0,0,0,188,76Zm8,76a68,68,0,0,1-136,0V140a8,8,0,0,1,8-8h8v20a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V92a8,8,0,0,1,16,0v28a12,12,0,0,0,24,0V108a8,8,0,0,1,16,0Z\"/>","duotone:hand-grabbing":"<path d=\"M208,108v44a80,80,0,0,1-160,0V140a20,20,0,0,1,20-20H88V92a20,20,0,0,1,40,0,20,20,0,0,1,40,0v16a20,20,0,0,1,40,0Z\" opacity=\"0.2\"/><path d=\"M188,80a27.79,27.79,0,0,0-13.36,3.4,28,28,0,0,0-46.64-11A28,28,0,0,0,80,92v20H68a28,28,0,0,0-28,28v12a88,88,0,0,0,176,0V108A28,28,0,0,0,188,80Zm12,72a72,72,0,0,1-144,0V140a12,12,0,0,1,12-12H80v24a8,8,0,0,0,16,0V92a12,12,0,0,1,24,0v28a8,8,0,0,0,16,0V92a12,12,0,0,1,24,0v28a8,8,0,0,0,16,0V108a12,12,0,0,1,24,0Z\"/>","bold:hand-pointing":"<path d=\"M196,84a31.94,31.94,0,0,0-11.22,2A32,32,0,0,0,148,69V44a32,32,0,0,0-64,0v66.83A32,32,0,0,0,32.25,148l4.68,8.24C71.11,216.48,86.72,244,136,244a92.1,92.1,0,0,0,92-92V116A32,32,0,0,0,196,84Zm8,68a68.08,68.08,0,0,1-68,68c-34,0-43.49-14.45-78.2-75.65l-4.69-8.28a.16.16,0,0,1,0-.07,8,8,0,0,1,13.86-8c.06.12.13.23.2.35l18.68,30A12,12,0,0,0,108,152V44a8,8,0,0,1,16,0v68a12,12,0,0,0,24,0V100a8,8,0,0,1,16,0v20a12,12,0,0,0,24,0v-4a8,8,0,0,1,16,0Z\"/>","fill:heart":"<path d=\"M240,102c0,70-103.79,126.66-108.21,129a8,8,0,0,1-7.58,0C119.79,228.66,16,172,16,102A62.07,62.07,0,0,1,78,40c20.65,0,38.73,8.88,50,23.89C139.27,48.88,157.35,40,178,40A62.07,62.07,0,0,1,240,102Z\"/>","fill:horse":"<path d=\"M202.05,55A103.24,103.24,0,0,0,128,24h-8a8,8,0,0,0-8,8V59.53L11.81,121.19a8,8,0,0,0-2.59,11.05l13.78,22,.3.43a31.84,31.84,0,0,0,31.34,12.83c13.93-2.36,38.62-6.54,61.4,3.29l-26.6,36.57A84.71,84.71,0,0,1,69.34,194,8,8,0,1,0,58.67,206a103.32,103.32,0,0,0,69.26,26l2.17,0a104,104,0,0,0,72-177ZM124,112a12,12,0,1,1,12-12A12,12,0,0,1,124,112Z\"/>","fill:hourglass":"<path d=\"M200,75.64V40a16,16,0,0,0-16-16H72A16,16,0,0,0,56,40V76a16.08,16.08,0,0,0,6.41,12.8L114.67,128,62.4,167.2A16.07,16.07,0,0,0,56,180v36a16,16,0,0,0,16,16H184a16,16,0,0,0,16-16V180.36a16,16,0,0,0-6.36-12.77L141.26,128l52.38-39.59A16.05,16.05,0,0,0,200,75.64Z\"/>","fill:infinity":"<path d=\"M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM204.28,156.28a40,40,0,0,1-56.4.17L97.29,111.34,97,111A24,24,0,1,0,97,145c.36-.36.71-.73,1-1.1a8,8,0,1,1,12,10.6c-.55.62-1.13,1.23-1.71,1.81a40,40,0,1,1-.17-56.73l50.58,45.11.33.31A24,24,0,1,0,159,111c-.36.36-.7.72-1,1.1a8,8,0,0,1-12-10.59c.54-.62,1.12-1.24,1.71-1.82a40,40,0,0,1,56.57,56.56Z\"/>","fill:key":"<path d=\"M216.57,39.43A80,80,0,0,0,83.91,120.78L28.69,176A15.86,15.86,0,0,0,24,187.31V216a16,16,0,0,0,16,16H72a8,8,0,0,0,8-8V208H96a8,8,0,0,0,8-8V184h16a8,8,0,0,0,5.66-2.34l9.56-9.57A79.73,79.73,0,0,0,160,176h.1A80,80,0,0,0,216.57,39.43ZM180,92a16,16,0,1,1,16-16A16,16,0,0,1,180,92Z\"/>","fill:lamp":"<path d=\"M246.68,156.4A8,8,0,0,1,240,160H208v32a8,8,0,0,1-16,0V160H136v48h24a8,8,0,0,1,0,16H96a8,8,0,0,1,0-16h24V160H16a8,8,0,0,1-7.35-11.15l48-112A8,8,0,0,1,64,32H192a8,8,0,0,1,7.35,4.85l48,112A8,8,0,0,1,246.68,156.4Z\"/>","fill:lightning":"<path d=\"M213.85,125.46l-112,120a8,8,0,0,1-13.69-7l14.66-73.33L45.19,143.49a8,8,0,0,1-3-13l112-120a8,8,0,0,1,13.69,7L153.18,90.9l57.63,21.61a8,8,0,0,1,3,12.95Z\"/>","fill:link":"<path d=\"M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM115.7,192.49a43.31,43.31,0,0,1-55-66.43l25.37-25.37a43.35,43.35,0,0,1,61.25,0,42.9,42.9,0,0,1,9.95,15.43,8,8,0,1,1-15,5.6A27.33,27.33,0,0,0,97.37,112L72,137.37a27.32,27.32,0,0,0,34.68,41.91,8,8,0,1,1,9,13.21Zm79.61-62.55-25.37,25.37A43,43,0,0,1,139.32,168h0a43.35,43.35,0,0,1-40.53-28.12,8,8,0,1,1,15-5.6A27.35,27.35,0,0,0,139.28,152h0a27.14,27.14,0,0,0,19.32-8L184,118.63a27.32,27.32,0,0,0-34.68-41.91,8,8,0,1,1-9-13.21,43.32,43.32,0,0,1,55,66.43Z\"/>","fill:magic-wand":"<path d=\"M248,152a8,8,0,0,1-8,8H224v16a8,8,0,0,1-16,0V160H192a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,248,152ZM56,72H72V88a8,8,0,0,0,16,0V72h16a8,8,0,0,0,0-16H88V40a8,8,0,0,0-16,0V56H56a8,8,0,0,0,0,16ZM184,192h-8v-8a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0v-8h8a8,8,0,0,0,0-16ZM219.31,80,80,219.31a16,16,0,0,1-22.62,0L36.68,198.63a16,16,0,0,1,0-22.63L176,36.69a16,16,0,0,1,22.63,0l20.68,20.68A16,16,0,0,1,219.31,80ZM208,68.69,187.31,48l-32,32L176,100.69Z\"/>","fill:megaphone":"<path d=\"M200,72H160.2c-2.91-.17-53.62-3.74-101.91-44.24A16,16,0,0,0,32,40V200a16,16,0,0,0,26.29,12.25c37.77-31.68,77-40.76,93.71-43.3v31.72A16,16,0,0,0,159.12,214l11,7.33A16,16,0,0,0,194.5,212l11.77-44.36A48,48,0,0,0,200,72ZM179,207.89l0,.11-11-7.33V168h21.6ZM200,152H168V88h32a32,32,0,1,1,0,64Z\"/>","fill:moon":"<path d=\"M235.54,150.21a104.84,104.84,0,0,1-37,52.91A104,104,0,0,1,32,120,103.09,103.09,0,0,1,52.88,57.48a104.84,104.84,0,0,1,52.91-37,8,8,0,0,1,10,10,88.08,88.08,0,0,0,109.8,109.8,8,8,0,0,1,10,10Z\"/>","fill:moon-stars":"<path d=\"M240,96a8,8,0,0,1-8,8H216v16a8,8,0,0,1-16,0V104H184a8,8,0,0,1,0-16h16V72a8,8,0,0,1,16,0V88h16A8,8,0,0,1,240,96ZM144,56h8v8a8,8,0,0,0,16,0V56h8a8,8,0,0,0,0-16h-8V32a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16Zm65.14,94.33A88.07,88.07,0,0,1,105.67,46.86a8,8,0,0,0-10.6-9.06A96,96,0,1,0,218.2,160.93a8,8,0,0,0-9.06-10.6Z\"/>","fill:paw-print":"<path d=\"M240,108a28,28,0,1,1-28-28A28,28,0,0,1,240,108ZM72,108a28,28,0,1,0-28,28A28,28,0,0,0,72,108ZM92,88A28,28,0,1,0,64,60,28,28,0,0,0,92,88Zm72,0a28,28,0,1,0-28-28A28,28,0,0,0,164,88Zm23.12,60.86a35.3,35.3,0,0,1-16.87-21.14,44,44,0,0,0-84.5,0A35.25,35.25,0,0,1,69,148.82,40,40,0,0,0,88,224a39.48,39.48,0,0,0,15.52-3.13,64.09,64.09,0,0,1,48.87,0,40,40,0,0,0,34.73-72Z\"/>","fill:person-simple-walk":"<path d=\"M120,48a32,32,0,1,1,32,32A32,32,0,0,1,120,48Zm88,88c-28.64,0-41.81-13.3-55.75-27.37-3.53-3.57-7.18-7.26-11-10.58-37-32.14-96.22,22.73-98.72,25.08a8,8,0,0,0,10.95,11.66A163.88,163.88,0,0,1,84,113c13.78-7.38,25.39-10.23,34.7-8.58L64.66,228.81a8,8,0,0,0,4.15,10.52A7.84,7.84,0,0,0,72,240a8,8,0,0,0,7.34-4.81l33.59-77.27L144,180.12V232a8,8,0,0,0,16,0V176a8,8,0,0,0-3.35-6.51l-37.2-26.57L132.88,112c2.64,2.44,5.26,5.07,8,7.84C155.05,134.19,172.69,152,208,152a8,8,0,0,0,0-16Z\"/>","bold:plus":"<path d=\"M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z\"/>","fill:scales":"<path d=\"M239.43,133l-32-80A8,8,0,0,0,200,48a8.27,8.27,0,0,0-1.73.21L136,62V40a8,8,0,0,0-16,0V65.58L54.27,80.21A8,8,0,0,0,48.57,85l-32,80a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32a7.92,7.92,0,0,0-.57-3L66.92,93.77,120,82V208H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V78.42L187,67.1,160.57,133a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32A7.92,7.92,0,0,0,239.43,133Zm-160,35H32.62L56,109.54Zm97.24-32L200,77.54,223.38,136Z\"/>","duotone:shuffle":"<path d=\"M107.14,98.8,128,128l-20.86,29.2A64,64,0,0,1,55.06,184H32V72H55.06A64,64,0,0,1,107.14,98.8ZM200.94,72a64,64,0,0,0-52.08,26.8L128,128l20.86,29.2A64,64,0,0,0,200.94,184H232V72Z\" opacity=\"0.2\"/><path d=\"M237.66,178.34a8,8,0,0,1,0,11.32l-24,24a8,8,0,0,1-11.32-11.32L212.69,192H200.94a72.12,72.12,0,0,1-58.59-30.15l-41.72-58.4A56.1,56.1,0,0,0,55.06,80H32a8,8,0,0,1,0-16H55.06a72.12,72.12,0,0,1,58.59,30.15l41.72,58.4A56.1,56.1,0,0,0,200.94,176h11.75l-10.35-10.34a8,8,0,0,1,11.32-11.32ZM143,107a8,8,0,0,0,11.16-1.86l1.2-1.67A56.1,56.1,0,0,1,200.94,80h11.75L202.34,90.34a8,8,0,0,0,11.32,11.32l24-24a8,8,0,0,0,0-11.32l-24-24a8,8,0,0,0-11.32,11.32L212.69,64H200.94a72.12,72.12,0,0,0-58.59,30.15l-1.2,1.67A8,8,0,0,0,143,107Zm-30,42a8,8,0,0,0-11.16,1.86l-1.2,1.67A56.1,56.1,0,0,1,55.06,176H32a8,8,0,0,0,0,16H55.06a72.12,72.12,0,0,0,58.59-30.15l1.2-1.67A8,8,0,0,0,113,149Z\"/>","fill:skull":"<path d=\"M128,16C70.65,16,24,60.86,24,116c0,34.1,18.27,66,48,84.28V216a16,16,0,0,0,16,16h8a4,4,0,0,0,4-4V200.27a8.17,8.17,0,0,1,7.47-8.25,8,8,0,0,1,8.53,8v28a4,4,0,0,0,4,4h16a4,4,0,0,0,4-4V200.27a8.17,8.17,0,0,1,7.47-8.25,8,8,0,0,1,8.53,8v28a4,4,0,0,0,4,4h8a16,16,0,0,0,16-16V200.28C213.73,182,232,150.1,232,116,232,60.86,185.35,16,128,16ZM92,152a20,20,0,1,1,20-20A20,20,0,0,1,92,152Zm72,0a20,20,0,1,1,20-20A20,20,0,0,1,164,152Z\"/>","bold:sparkle":"<path d=\"M199,125.31l-49.88-18.39L130.69,57a19.92,19.92,0,0,0-37.38,0L74.92,106.92,25,125.31a19.92,19.92,0,0,0,0,37.38l49.88,18.39L93.31,231a19.92,19.92,0,0,0,37.38,0l18.39-49.88L199,162.69a19.92,19.92,0,0,0,0-37.38Zm-63.38,35.16a12,12,0,0,0-7.11,7.11L112,212.28l-16.47-44.7a12,12,0,0,0-7.11-7.11L43.72,144l44.7-16.47a12,12,0,0,0,7.11-7.11L112,75.72l16.47,44.7a12,12,0,0,0,7.11,7.11L180.28,144ZM140,40a12,12,0,0,1,12-12h12V16a12,12,0,0,1,24,0V28h12a12,12,0,0,1,0,24H188V64a12,12,0,0,1-24,0V52H152A12,12,0,0,1,140,40ZM252,88a12,12,0,0,1-12,12h-4v4a12,12,0,0,1-24,0v-4h-4a12,12,0,0,1,0-24h4V72a12,12,0,0,1,24,0v4h4A12,12,0,0,1,252,88Z\"/>","fill:sparkle":"<path d=\"M208,144a15.78,15.78,0,0,1-10.42,14.94L146,178l-19,51.62a15.92,15.92,0,0,1-29.88,0L78,178l-51.62-19a15.92,15.92,0,0,1,0-29.88L78,110l19-51.62a15.92,15.92,0,0,1,29.88,0L146,110l51.62,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z\"/>","bold:squares-four":"<path d=\"M100,36H56A20,20,0,0,0,36,56v44a20,20,0,0,0,20,20h44a20,20,0,0,0,20-20V56A20,20,0,0,0,100,36ZM96,96H60V60H96ZM200,36H156a20,20,0,0,0-20,20v44a20,20,0,0,0,20,20h44a20,20,0,0,0,20-20V56A20,20,0,0,0,200,36Zm-4,60H160V60h36Zm-96,40H56a20,20,0,0,0-20,20v44a20,20,0,0,0,20,20h44a20,20,0,0,0,20-20V156A20,20,0,0,0,100,136Zm-4,60H60V160H96Zm104-60H156a20,20,0,0,0-20,20v44a20,20,0,0,0,20,20h44a20,20,0,0,0,20-20V156A20,20,0,0,0,200,136Zm-4,60H160V160h36Z\"/>","bold:stack":"<path d=\"M234.36,170A12,12,0,0,1,230,186.37l-96,56a12,12,0,0,1-12.1,0l-96-56a12,12,0,0,1,12.09-20.74l90,52.48L218,165.63A12,12,0,0,1,234.36,170ZM218,117.63,128,170.11,38.05,117.63A12,12,0,0,0,26,138.37l96,56a12,12,0,0,0,12.1,0l96-56A12,12,0,0,0,218,117.63ZM20,80a12,12,0,0,1,6-10.37l96-56a12.06,12.06,0,0,1,12.1,0l96,56a12,12,0,0,1,0,20.74l-96,56a12,12,0,0,1-12.1,0l-96-56A12,12,0,0,1,20,80Zm35.82,0L128,122.11,200.18,80,128,37.89Z\"/>","duotone:stack":"<path d=\"M224,80l-96,56L32,80l96-56Z\" opacity=\"0.2\"/><path d=\"M230.91,172A8,8,0,0,1,228,182.91l-96,56a8,8,0,0,1-8.06,0l-96-56A8,8,0,0,1,36,169.09l92,53.65,92-53.65A8,8,0,0,1,230.91,172ZM220,121.09l-92,53.65L36,121.09A8,8,0,0,0,28,134.91l96,56a8,8,0,0,0,8.06,0l96-56A8,8,0,1,0,220,121.09ZM24,80a8,8,0,0,1,4-6.91l96-56a8,8,0,0,1,8.06,0l96,56a8,8,0,0,1,0,13.82l-96,56a8,8,0,0,1-8.06,0l-96-56A8,8,0,0,1,24,80Zm23.88,0L128,126.74,208.12,80,128,33.26Z\"/>","fill:star":"<path d=\"M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59-4.76,22.76-55.08a16.36,16.36,0,0,1,30.27,0l22.75,55.08,59,4.76a16.46,16.46,0,0,1,9.37,28.86Z\"/>","fill:sun":"<path d=\"M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm8,24a64,64,0,1,0,64,64A64.07,64.07,0,0,0,128,64ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z\"/>","fill:sword":"<path d=\"M216,32H152a8,8,0,0,0-6.34,3.12l-64,83.21L72,108.69a16,16,0,0,0-22.64,0l-8.69,8.7a16,16,0,0,0,0,22.63l22,22-32,32a16,16,0,0,0,0,22.63l8.69,8.68a16,16,0,0,0,22.62,0l32-32,22,22a16,16,0,0,0,22.64,0l8.69-8.7a16,16,0,0,0,0-22.63l-9.64-9.64,83.21-64A8,8,0,0,0,224,104V40A8,8,0,0,0,216,32Zm-8,68.06-81.74,62.88L115.32,152l50.34-50.34a8,8,0,0,0-11.32-11.31L104,140.68,93.07,129.74,155.94,48H208Z\"/>","duotone:waves":"<path d=\"M216,70.39v112c-72,59.69-104-56.47-176,3.22v-112C112,13.92,144,130.08,216,70.39Z\" opacity=\"0.2\"/><path d=\"M222.16,177.25a8,8,0,0,1-1,11.25c-17.36,14.39-32.86,19.5-47,19.5-18.58,0-34.82-8.82-49.93-17-25.35-13.76-47.24-25.64-79.07.74a8,8,0,1,1-10.22-12.31c40.17-33.28,70.32-16.92,96.93-2.48,25.35,13.75,47.24,25.63,79.07-.74A8,8,0,0,1,222.16,177.25Zm-11.27-57c-31.83,26.38-53.72,14.5-79.07.74-26.61-14.43-56.76-30.79-96.93,2.49a8,8,0,0,0,10.22,12.31c31.83-26.38,53.72-14.5,79.07-.74,15.11,8.19,31.35,17,49.93,17,14.14,0,29.64-5.11,47-19.5a8,8,0,1,0-10.22-12.31ZM45.11,79.8c31.83-26.37,53.72-14.49,79.07-.74,15.11,8.2,31.35,17,49.93,17,14.14,0,29.64-5.12,47-19.5a8,8,0,1,0-10.22-12.31c-31.83,26.38-53.72,14.5-79.07.74C105.21,50.58,75.06,34.22,34.89,67.5A8,8,0,1,0,45.11,79.8Z\"/>","fill:wine":"<path d=\"M205.33,103.67,183.56,29.74A8,8,0,0,0,175.89,24H80.11a8,8,0,0,0-7.67,5.74L50.67,103.67a63.46,63.46,0,0,0,17.42,64.67A87.41,87.41,0,0,0,120,191.63V232H88a8,8,0,1,0,0,16h80a8,8,0,1,0,0-16H136V191.63a87.39,87.39,0,0,0,51.91-23.29A63.48,63.48,0,0,0,205.33,103.67ZM86.09,40h83.82L190,108.19c.09.3.17.6.25.9-21.42,7.68-45.54-1.6-58.63-8.23C106.43,88.11,86.43,86.49,71.68,88.93Z\"/>"};
+function hydrateIcons(root){root.querySelectorAll('i[class*="ph-"]:not([data-ic])').forEach(el=>{const m=el.className.match(/ph-(bold|fill|duotone)\s+ph-([a-z0-9-]+)/);if(!m)return;const svg=ICONS[m[1]+":"+m[2]];if(!svg)return;el.dataset.ic=m[2];el.setAttribute("aria-hidden","true");el.innerHTML=`<svg viewBox="0 0 256 256" focusable="false">${svg}</svg>`})}
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)hydrateIcons(n.parentElement||n)}))).observe(document.body,{childList:true,subtree:true});
+hydrateIcons(document);
+if(P.get("spread")||P.get("n")){S.group=groupOf(S.spread);S.step=2}
+render();
+</script>
+</body>
+</html>
